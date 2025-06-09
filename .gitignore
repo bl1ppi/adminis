@@ -1,0 +1,6 @@
+includes/config.php
+setup/.installed
+*.sqlite
+*.log
+/vendor/
+/node_modules/

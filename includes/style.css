@@ -1,0 +1,284 @@
+/* Главная страница */
+.main-heading {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  background: #e9f0ff;
+  border-color: #337ab7;
+}
+
+.card-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: #555;
+}
+
+a.card {
+  text-decoration: none;
+  color: inherit;
+}
+a.card:hover {
+	text-decoration: none;
+	color: inherit;
+}
+
+.stats {
+  margin-top: 40px;
+  padding: 20px;
+  background: #f0f7ff;
+  border-radius: 10px;
+}
+
+.stats h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.stat-block {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.stat-block h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.stat-block p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.logout {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.logout a {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #d9534f;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.logout a:hover {
+  background: #c9302c;
+}
+
+/* Базовые стили */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Arial", sans-serif;
+    background-color: #fafafa;
+    color: #222;
+    font-size: 14px;
+}
+
+/* Навигация */
+header nav {
+    background-color: #f0f0f0;
+    padding: 6px 16px;
+    border-bottom: 1px solid #ccc;
+    font-size: 14px;
+}
+
+header nav a {
+    color: #222;
+    text-decoration: none;
+    margin-right: 12px;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+/* Заголовки */
+h1, h2, h3 {
+    color: #111;
+    margin: 10px 0 5px;
+    font-weight: normal;
+}
+
+/* Кнопки */
+button, input[type="submit"] {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover, input[type="submit"]:hover {
+    background-color: #222;
+}
+
+/* Таблицы */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    background-color: white;
+    font-size: 13px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #eaeaea;
+}
+
+/* Формы */
+form {
+    margin: 10px 0;
+    background-color: white;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-size: 13px;
+    background-color: #fff;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* Флеш-сообщения */
+.success {
+    background-color: #dff0d8;
+    border: 1px solid #b2d8b2;
+    color: #3c763d;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+}
+
+.error {
+    background-color: #f2dede;
+    border: 1px solid #e0b4b4;
+    color: #a94442;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+}
+
+/* Боковая панель */
+.layout-wrapper {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+.sidebar {
+    width: 280px;
+    padding: 10px;
+    background: #f4f4f4;
+    border-right: 1px solid #ccc;
+    box-sizing: border-box;
+}
+.sidebar label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+}
+.sidebar input, .sidebar select, .sidebar button {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.content {
+    flex-grow: 1;
+    padding: 15px;
+}
+
+/* Иконки */
+img.icon-option {
+    width: 40px;
+    height: 40px;
+    margin: 3px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+img.icon-option:hover {
+    border-color: #555;
+}
+
+/* Линки */
+a {
+    color: #0056b3;
+}
+
+a:hover {
+    text-decoration: underline;
+}
