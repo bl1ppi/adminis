@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($title !== '' && $content !== '') {
         $stmt = $pdo->prepare("UPDATE documentation SET title = ?, content = ? WHERE id = ?");
         $stmt->execute([$title, $content, $id]);
-        header("Location: docs.php?id=$id");
+        header("Location: index.php?id=$id");
         exit;
     } else {
         $error = "Поля не могут быть пустыми.";

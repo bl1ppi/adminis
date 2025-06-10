@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO documentation (title, content) VALUES (?, ?)");
         $stmt->execute([$title, $content]);
         $newId = $pdo->lastInsertId();
-        header("Location: docs.php?id=$newId");
+        header("Location: index.php?id=$newId");
         exit;
     } else {
         $error = "Заполните все поля.";

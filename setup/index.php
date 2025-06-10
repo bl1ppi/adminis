@@ -9,7 +9,7 @@ $configFile = __DIR__ . '/../includes/config.php';
 $installedFlag = __DIR__ . '/.installed';
 
 if (file_exists($configFile)) {
-    header('Location: /../index.php');
+    header('Location: ../index.php');
     exit;
 }
 
@@ -247,7 +247,7 @@ PHP;
                 $success = true;
             } else {
                 $manualConfig = htmlspecialchars($configData);
-                $error = "⚠️ Не удалось создать файл <code>config.php</code>. Создайте его вручную и вставьте следующий код:";
+                $error = "⚠️ Не удалось создать файл <code>cincludes/config.php</code>. Создайте его вручную и вставьте следующий код:";
             }
 
         } catch (Exception $e) {
