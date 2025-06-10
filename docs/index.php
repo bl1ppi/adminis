@@ -1,14 +1,7 @@
 <?php
-require_once '../includes/db.php';
+require_once '../includes/config.php';
 require_once '../includes/auth.php';
 require_once '../includes/navbar.php';
-
-$docs = $pdo->query("SELECT id, title FROM documentation ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
-$current_id = isset($_GET['id']) ? (int)$_GET['id'] : ($docs[0]['id'] ?? 0);
-
-$stmt = $pdo->prepare("SELECT title, content FROM documentation WHERE id = ?");
-$stmt->execute([$current_id]);
-$current_doc = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -22,12 +15,10 @@ $current_doc = $stmt->fetch(PDO::FETCH_ASSOC);
             margin: 0;
             font-family: sans-serif;
         }
-
         .layout {
             display: flex;
-            height: calc(100vh - 50px); /* вычитаем высоту navbar */
+            height: calc(100vh - 50px);
         }
-
         .sidebar {
             width: 250px;
             background: #f0f0f0;
@@ -35,31 +26,30 @@ $current_doc = $stmt->fetch(PDO::FETCH_ASSOC);
             padding: 15px;
             box-sizing: border-box;
         }
-
         .sidebar h3 {
             margin-top: 0;
         }
-
         .sidebar a {
             display: block;
             margin: 5px 0;
             color: #0033cc;
             text-decoration: none;
+            cursor: pointer;
         }
-
         .sidebar a.active {
             font-weight: bold;
             color: black;
         }
-
         .content {
             flex-grow: 1;
             padding: 20px;
             overflow-y: auto;
         }
-
         .content h1 {
             margin-top: 0;
+        }
+        .action-links {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -67,21 +57,45 @@ $current_doc = $stmt->fetch(PDO::FETCH_ASSOC);
 <div class="layout">
     <div class="sidebar">
         <h3>📘 Разделы</h3>
-        <?php foreach ($docs as $doc): ?>
-            <a href="index.php?id=<?= $doc['id'] ?>" class="<?= $doc['id'] == $current_id ? 'active' : '' ?>">
-                <?= htmlspecialchars($doc['title']) ?>
-            </a>
-        <?php endforeach; ?>
+        <div id="doc-list">Загрузка...</div>
         <hr>
-        <a href="edit_docs.php?id=<?= $current_id ?>">✏️ Редактировать</a>
-        <a href="add_docs.php">➕ Добавить раздел</a>
+        <div class="action-links">
+            <a id="edit-link" href="#">✏️ Редактировать</a>
+            <a href="add_docs.php">➕ Добавить раздел</a>
+        </div>
     </div>
 
     <div class="content">
-        <h1><?= htmlspecialchars($current_doc['title']) ?></h1>
-        <?= $current_doc['content'] ?>
+        <h1 id="doc-title">Загрузка...</h1>
+        <div id="doc-content"></div>
     </div>
 </div>
 
+<script>
+function loadDocs(id = null) {
+    const url = 'data.php' + (id ? `?id=${id}` : '');
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            // Список
+            const docList = document.getElementById('doc-list');
+            docList.innerHTML = '';
+            data.docs.forEach(doc => {
+                const link = document.createElement('a');
+                link.textContent = doc.title;
+                link.className = (doc.id === data.current_id ? 'active' : '');
+                link.onclick = () => loadDocs(doc.id);
+                docList.appendChild(link);
+            });
+
+            // Контент
+            document.getElementById('doc-title').textContent = data.current.title;
+            document.getElementById('doc-content').innerHTML = data.current.content;
+            document.getElementById('edit-link').href = 'edit_docs.php?id=' + data.current_id;
+        });
+}
+
+loadDocs();
+</script>
 </body>
 </html>
