@@ -41,6 +41,7 @@ require_once '../includes/navbar.php';
   <script>
     let chartsData = {};
     let charts = {};
+    let historyLoaded = false;
 
     function renderServers(data) {
       const container = document.getElementById('server-list');
@@ -48,11 +49,18 @@ require_once '../includes/navbar.php';
 
       data.forEach(server => {
         const statusClass = server.status === 'online' ? 'status-online' : 'status-offline';
+        const sid = server.id;
+        const stored = chartsData[sid] || { cpu: [], memory: [] };
 
         // Формируем div карточки
         const div = document.createElement('div');
         div.classList.add('server-card');
-
+        
+        Object.keys(charts).forEach(id => {
+          charts[id].destroy();
+        });
+        charts = {};
+      
         div.innerHTML = `
           <h3>${server.name}</h3>
           <p><strong>IP:</strong> ${server.ip}</p>
@@ -66,9 +74,13 @@ require_once '../includes/navbar.php';
         `;
         container.appendChild(div);
 
-        // Графики CPU и памяти
-        renderChart(`cpu-${server.id}`, chartsData[server.id].cpu, 'CPU Load (%)', 'line', 0, 100);
-        renderChart(`mem-${server.id}`, chartsData[server.id].memory, 'Memory Usage (MB)', 'line', 0, server.memory.total);
+        if (Array.isArray(stored.cpu) && stored.cpu.length) {
+          renderChart(`cpu-${sid}`, stored.cpu, 'CPU Load (%)', 'line', 0, 100);
+        }
+
+        if (Array.isArray(stored.memory) && stored.memory.length) {
+          renderChart(`mem-${sid}`, stored.memory, 'Memory Usage (MB)', 'line', 0, stored.totalMemory || 8192);
+        }
 
         // Диски
         const disksDiv = document.getElementById(`disks-${server.id}`);
@@ -122,46 +134,52 @@ require_once '../includes/navbar.php';
     }
 
     async function updateData() {
-    try {
-        const [currRes, histRes] = await Promise.all([
-        fetch('monitor_data.php'),
-        fetch('history.php?range=1440')
-        ]);
-        const [curr, hist] = await Promise.all([
-        currRes.json(),
-        histRes.json()
-        ]);
+      try {
+        const currRes = await fetch('monitor_data.php');
+        const curr = await currRes.json();
+
+        // Загружаем историю один раз
+        if (!historyLoaded) {
+          const histRes = await fetch('history.php?range=1440');
+          const hist = await histRes.json();
+
+          curr.forEach(server => {
+            const sid = server.id;
+            chartsData[sid] = {
+              cpu: Array.isArray(hist[sid]?.cpu) ? hist[sid].cpu.slice(-50) : [],
+              memory: Array.isArray(hist[sid]?.memory) ? hist[sid].memory.slice(-50) : [],
+              totalMemory: server.memory.total
+            };
+          });
+
+          historyLoaded = true;
+        }
 
         curr.forEach(server => {
-        const sid = server.id;
-        if (!chartsData[sid]) chartsData[sid] = { cpu: [], memory: [], totalMemory: server.memory.total };
+          const sid = server.id;
+          const now = Math.floor(Date.now() / 1000);
 
-        // Загружаем историю один раз при первой инициализации
-        if (!chartsData[sid].cpu.length && hist[sid]?.cpu) {
-            chartsData[sid].cpu = hist[sid].cpu;
-        }
-        if (!chartsData[sid].memory.length && hist[sid]?.memory) {
-            chartsData[sid].memory = hist[sid].memory;
-        }
+          if (!chartsData[sid]) {
+            chartsData[sid] = { cpu: [], memory: [], totalMemory: server.memory.total };
+          }
+          const latestCpu = server.cpu.history?.slice(-1)[0];
+          if (latestCpu) {
+            chartsData[sid].cpu.push(latestCpu);
+          }
+          chartsData[sid].memory.push({ t: now, v: server.memory.used });
 
-        chartsData[sid].cpu.push({ t: Math.floor(Date.now() / 1000), v: server.cpu.used });
-        chartsData[sid].memory.push({ t: Math.floor(Date.now() / 1000), v: server.memory.used });
-
-        // обрезаем до 50 точек
-        chartsData[sid].cpu = chartsData[sid].cpu.slice(-50);
-        chartsData[sid].memory = chartsData[sid].memory.slice(-50);
-
-        chartsData[sid].totalMemory = server.memory.total;
+          chartsData[sid].cpu = chartsData[sid].cpu.slice(-50);
+          chartsData[sid].memory = chartsData[sid].memory.slice(-50);
         });
 
         renderServers(curr);
-    } catch (e) {
+      } catch(e) {
         console.error(e);
-    }
+      }
     }
 
     updateData();
-    setInterval(updateData, 10000);
+    setInterval(updateData, 60000);
   </script>
 </body>
 </html>

@@ -17,7 +17,10 @@ function collectServerStats(array $server): array {
     $cpuOutput = $ssh->exec("top -bn1 | grep 'Cpu(s)'");
     if (preg_match('/(\d+\.\d+)\s*id/', $cpuOutput, $matches)) {
         $cpuUsage = 100 - (float)$matches[1];
-        $stats['cpu'] = [['t' => time(), 'v' => $cpuUsage]];
+        $stats['cpu'] = [
+            'used' => $cpuUsage,
+            'history' => [['t' => time(), 'v' => $cpuUsage]]
+        ];
     } else {
         $stats['cpu'] = [['t' => time(), 'v' => null]];
     }
