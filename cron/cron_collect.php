@@ -1,11 +1,12 @@
 <?php
-require_once '../includes/db.php';
-require_once '../includes/helpers.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 $servers = $pdo->query("SELECT * FROM servers ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($servers as $srv) {
     $stats = collectServerStats($srv);
+    $pdo->exec("DELETE FROM server_stats WHERE created_at < NOW() - INTERVAL 1 DAY");
     $stmt = $pdo->prepare("
         INSERT INTO server_stats 
         (server_id, cpu_used, mem_used, mem_total, disk, services)

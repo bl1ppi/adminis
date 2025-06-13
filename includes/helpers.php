@@ -1,5 +1,5 @@
 <?php
-require_once '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
 
@@ -13,7 +13,7 @@ function collectServerStats(array $server): array {
 
     $stats = ['status' => 'online'];
 
-    // CPU: используем top -bn1 для однократного снимка нагрузки
+    // CPU: top
     $cpuOutput = $ssh->exec("top -bn1 | grep 'Cpu(s)'");
     if (preg_match('/(\d+\.\d+)\s*id/', $cpuOutput, $matches)) {
         $cpuUsage = 100 - (float)$matches[1];
@@ -35,7 +35,7 @@ function collectServerStats(array $server): array {
         ];
     }
 
-    // Диски: df -BG с фильтрацией только нужных путей
+    // Диски
     $dfOutput = $ssh->exec("df -BG --output=source,size,used,avail,target -x tmpfs -x devtmpfs | tail -n +2");
     $diskStats = [];
     foreach (explode("\n", trim($dfOutput)) as $line) {
@@ -53,12 +53,20 @@ function collectServerStats(array $server): array {
     }
     $stats['disks'] = $diskStats;
 
-    // Службы
-    $services = json_decode($server['services'], true) ?? [];
+    // ✅ Службы
     $serviceStats = [];
+    $services = array_filter(array_map('trim', explode(',', $server['services'] ?? '')));
     foreach ($services as $svc) {
-        $status = trim($ssh->exec("systemctl is-active " . escapeshellarg($svc)));
-        $serviceStats[] = ['name' => $svc, 'status' => $status];
+        $svc = trim($svc);
+        if ($svc === '') continue;
+
+        $statusRaw = $ssh->exec("systemctl is-active " . escapeshellarg($svc));
+        $status = trim($statusRaw);
+
+        $serviceStats[] = [
+            'name' => $svc,
+            'status' => $status // может быть: active, inactive, failed, etc.
+        ];
     }
     $stats['services'] = $serviceStats;
 
