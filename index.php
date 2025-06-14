@@ -10,6 +10,7 @@ require_once 'includes/config.php';
 // Получаем статистику
 $totalRooms = $pdo->query("SELECT COUNT(*) FROM rooms")->fetchColumn();
 $totalDevices = $pdo->query("SELECT COUNT(*) FROM devices")->fetchColumn();
+$totalServers = $pdo->query("SELECT COUNT(*) FROM servers")->fetchColumn();
 $totalLaptops = $pdo->query("SELECT COUNT(*) FROM laptops")->fetchColumn();
 $totalTeachers = $pdo->query("SELECT COUNT(*) FROM teachers")->fetchColumn();
 ?>
@@ -39,6 +40,12 @@ $totalTeachers = $pdo->query("SELECT COUNT(*) FROM teachers")->fetchColumn();
       <div class="card-desc">Управление кабинетами, добавление и редактирование оборудования.</div>
     </a>
 
+    <a href="monitor/" class="card">
+      <div class="card-icon">🖥</div>
+      <div class="card-title">Мониторинг</div>
+      <div class="card-desc">Дашбоард серверов, добавление и редактирование сереров.</div>
+    </a>
+
     <a href="laptops/" class="card">
       <div class="card-icon">💻</div>
       <div class="card-title">Учёт ноутбуков</div>
@@ -62,6 +69,10 @@ $totalTeachers = $pdo->query("SELECT COUNT(*) FROM teachers")->fetchColumn();
       <div class="stat-block">
         <h3><?= $totalDevices ?></h3>
         <p>Устройств</p>
+      </div>
+      <div class="stat-block">
+        <h3><?= $totalServers ?></h3>
+        <p>Серверов</p>
       </div>
       <div class="stat-block">
         <h3><?= $totalLaptops ?></h3>

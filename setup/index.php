@@ -225,6 +225,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
                     )",
                 },
+                'servers' => match ($dbType) {
+                    'mysql' => "CREATE TABLE IF NOT EXISTS servers (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(100) NOT NULL,
+                        ip VARCHAR(45) NOT NULL,
+                        user VARCHAR(50) NOT NULL DEFAULT 'monitor',
+                        services TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                    'pgsql' => "CREATE TABLE IF NOT EXISTS servers (
+                        id SERIAL PRIMARY KEY,
+                        name VARCHAR(100) NOT NULL,
+                        ip VARCHAR(45) NOT NULL,
+                        user VARCHAR(50) NOT NULL DEFAULT 'monitor',
+                        services TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )",
+                    'sqlite' => "CREATE TABLE IF NOT EXISTS servers (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        ip TEXT NOT NULL,
+                        user TEXT NOT NULL DEFAULT 'monitor',
+                        services TEXT,
+                        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                    )",
+                },
+                'server_stats' => match ($dbType) {
+                    'mysql' => "CREATE TABLE IF NOT EXISTS server_stats (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        server_id INT NOT NULL,
+                        cpu_used FLOAT NOT NULL,
+                        mem_used INT NOT NULL,
+                        mem_total INT NOT NULL,
+                        disk TEXT,
+                        services TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (server_id) REFERENCES servers(id) ON DELETE CASCADE
+                    )",
+                    'pgsql' => "CREATE TABLE IF NOT EXISTS server_stats (
+                        id SERIAL PRIMARY KEY,
+                        server_id INT NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
+                        cpu_used REAL NOT NULL,
+                        mem_used INT NOT NULL,
+                        mem_total INT NOT NULL,
+                        disk TEXT,
+                        services TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )",
+                    'sqlite' => "CREATE TABLE IF NOT EXISTS server_stats (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        server_id INTEGER NOT NULL,
+                        cpu_used REAL NOT NULL,
+                        mem_used INTEGER NOT NULL,
+                        mem_total INTEGER NOT NULL,
+                        disk TEXT,
+                        services TEXT,
+                        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (server_id) REFERENCES servers(id) ON DELETE CASCADE
+                    )",
+                },
             ];
 
             foreach ($tables as $sql) $pdo->exec($sql);

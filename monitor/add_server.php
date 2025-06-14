@@ -32,6 +32,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
   <h1>➕ Добавить сервер</h1>
+  <h2 class="setup-title">🔐 Генерация SSH-ключа мониторинга</h2>
+  <pre class="setup-instruction">
+Выполняется один раз на сервере Adminis (веб-интерфейса).
+
+1. Создайте директорию для ключей мониторинга
+
+  sudo mkdir -p /etc/monitoring
+  sudo chmod 700 /etc/monitoring
+
+2. Сгенерируйте пару ключей SSH
+
+  sudo ssh-keygen -t rsa -b 4096 -f /etc/monitoring/monitor_id_rsa -N ""
+
+3. Установите права доступа
+
+  sudo chmod 600 /etc/monitoring/monitor_id_rsa
+  sudo chmod 644 /etc/monitoring/monitor_id_rsa.pub
+
+  sudo chown -R www-data:www-data /etc/monitoring 
+  или если у вас httpd 
+  sudo chown -R apache:apache /etc/monitoring
+
+    🔑 Это создаст:
+
+        приватный ключ: /etc/monitoring/monitor_id_rsa
+
+        публичный ключ: /etc/monitoring/monitor_id_rsa.pub
+  </pre>
+  <h2 class="setup-title">📌 Инструкция по настройке пользователя и SSH</h2>
+  <pre class="setup-instruction">
+ssh root@REMOTE_IP
+
+1. Создайте пользователя monitor с домашней директорией:
+
+  adduser monitor
+    
+    🔒 Установите простой, но безопасный пароль, или сразу запретите вход по паролю, оставив только вход по ключу (см. шаг 2).
+
+2. Настройте SSH-доступ по публичному ключу:
+
+  mkdir -p /home/monitor/.ssh
+  chmod 700 /home/monitor/.ssh
+
+  # Вставьте содержимое публичного ключа мониторинга:
+  echo "ВАШ_ПУБЛИК_КЛЮЧ" > /home/monitor/.ssh/authorized_keys
+
+  chmod 600 /home/monitor/.ssh/authorized_keys
+  chown -R monitor:monitor /home/monitor/.ssh
+
+    📁 Теперь ключ будет храниться в /home/monitor/.ssh/authorized_keys, и пользователь сможет подключаться по SSH.
+
+3. Разрешите запуск нужных команд без пароля через sudo:
+
+Создайте отдельный файл:
+
+  echo "monitor ALL=(ALL) NOPASSWD: /usr/bin/mpstat, /usr/bin/free, /bin/df, /usr/bin/systemctl show --property=SubState, /usr/bin/systemctl is-active *" > /etc/sudoers.d/monitor
+  chmod 440 /etc/sudoers.d/monitor
+
+    💡 Это даст доступ только к нужным командам для мониторинга CPU, памяти, дисков и служб.
+
+✅ После этого:
+
+Убедитесь, что с сервера мониторинга можно подключиться по SSH:
+
+  ssh -i /etc/monitoring/monitor_id_rsa monitor@REMOTE_IP
+
+Убедитесь, что команды вроде sudo systemctl is-active apache2 работают без запроса пароля.
+
+🛠️ Инструкция по настройке cron на сервере мониторинга
+
+sudo crontab -u www-data -e
+
+Добавь в конец файла следующую строку, чтобы запускать сбор данных каждую минуту:
+
+* * * * * php /var/www/html/adminis/modules/monitoring/collect_stats.php
+
+  ✅ Убедись, что путь к collect_stats.php корректен — от корня файловой системы.
+  ✅ Также проверь, что PHP доступен по команде php. Если используется php8.1, замени php на php8.1.
+
+📁 Дополнительно: можно создать отдельного лог-файл /var/log/monitoring.log:
+
+sudo touch /var/log/monitoring.log
+sudo chown www-data:www-data /var/log/monitoring.log
+
+Тогда команда в cron будет выглядеть так:
+
+* * * * * php /var/www/html/adminis/modules/monitoring/collect_stats.php >> /var/log/monitoring.log 2>&1
+  </pre>
   <?php if ($success): ?>
     <p style="color: green;">Сервер добавлен.</p>
     <p><a href="index.php">← Вернуться</a></p>
@@ -49,29 +137,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </form>
 
   <hr>
-  <h2>📌 Инструкция по настройке пользователя и SSH</h2>
-  <pre>
-ssh root@REMOTE_IP
-
-# 1. Создать пользователя
-adduser --system --no-create-home --shell /usr/sbin/nologin monitor
-
-# 2. Разрешить SSH
-mkdir -p /home/monitor/.ssh
-chmod 700 /home/monitor/.ssh
-
-# 3. Добавить публичный ключ мониторинга:
-# (вставьте сюда содержимое файла /etc/monitoring/monitor_id_rsa.pub)
-echo "ВАШ_ПУБЛИК_КЛЮЧ" >> /home/monitor/.ssh/authorized_keys
-chmod 600 /home/monitor/.ssh/authorized_keys
-chown -R monitor:monitor /home/monitor/.ssh
-
-# 4. Настроить sudo для статистики:
-echo "monitor ALL=(ALL) NOPASSWD: /usr/bin/mpstat, /usr/bin/free, /bin/df, /usr/bin/systemctl" > /etc/sudoers.d/monitor
-chmod 440 /etc/sudoers.d/monitor
-
-# 5. Перезапустить SSH (если нужно):
-systemctl restart ssh
-  </pre>
 </body>
 </html>

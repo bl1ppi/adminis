@@ -40,6 +40,7 @@
     <div class="nav-links">
       <a href="/adminis/map">🗺 Карта сети</a>
       <a href="/adminis/rooms/">🏫 Кабинеты</a>
+	  <a href="/adminis/monitor/">🖥 Мониторинг</a>
       <a href="/adminis/laptops/">💻 Ноутбуки</a>
       <a href="/adminis/docs/">📘 Документация</a>
       <a href="/adminis/logout.php">🚪 Выход</a> 
