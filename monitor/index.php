@@ -10,32 +10,11 @@ require_once '../includes/navbar.php';
   <meta charset="UTF-8">
   <title>🖥️ Мониторинг серверов</title>
   <link rel="stylesheet" href="../includes/style.css">
-  <style>
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .server-card {
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    .server-card h3 {
-      margin: 0 0 10px;
-    }
-    .status-online { color: green; font-weight: bold; }
-    .status-offline { color: red; font-weight: bold; }
-    .metric-chart { max-height: 150px; width: 100%; margin-bottom: 15px; }
-  </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container-server">
     <h1>📊 Дашборд серверов</h1>
-    <p><a href="add_server.php">➕ Добавить сервер</a></p>
+    <p class="p-center"><a class="href-center" href="add_server.php">➕ Добавить сервер</a></p>
     <div class="card-grid" id="server-list"></div>
   </div>
 
@@ -66,23 +45,27 @@ require_once '../includes/navbar.php';
         div.classList.add('server-card');
 
         div.innerHTML = `
-          <h3>${server.name}</h3>
-          <p><strong>IP:</strong> ${server.ip}</p>
-          <p><strong>Статус:</strong> <span class="${statusClass}">${server.status}</span></p>
-          <label for="range-${sid}"><strong>Период:</strong></label>
-          <select id="range-${sid}" class="range-select" data-sid="${sid}">
-            <option value="30" ${selectedRange === '30' ? 'selected' : ''}>30 мин</option>
-            <option value="60" ${selectedRange === '60' ? 'selected' : ''}>1 ч</option>
-            <option value="240" ${selectedRange === '240' ? 'selected' : ''}>4 ч</option>
-            <option value="1440" ${selectedRange === '1440' ? 'selected' : ''}>24 ч</option>
-          </select>
-          <p><strong>CPU:</strong> <canvas id="cpu-${server.id}" class="metric-chart"></canvas></p>
-          <p><strong>Память:</strong> <canvas id="mem-${server.id}" class="metric-chart"></canvas></p>
-          <p><strong>Диски:</strong></p>
-          <div id="disks-${server.id}"></div>
-          <p><strong>Службы:</strong></p>
-          <ul id="services-${server.id}"></ul>
-          <p><a href="edit_server.php?id=${server.id}" class="edit-button">✏️ Редактировать</a></p>
+          <div class="card-top">
+            <h3>${server.name}</h3>
+            <p><strong>IP:</strong> ${server.ip}</p>
+            <p><strong>Статус:</strong> <span class="${statusClass}">${server.status}</span></p>
+            <label for="range-${sid}"><strong>Период:</strong></label>
+            <select id="range-${sid}" class="range-select" data-sid="${sid}">
+              <option value="30" ${selectedRange === '30' ? 'selected' : ''}>30 мин</option>
+              <option value="60" ${selectedRange === '60' ? 'selected' : ''}>1 ч</option>
+              <option value="240" ${selectedRange === '240' ? 'selected' : ''}>4 ч</option>
+              <option value="1440" ${selectedRange === '1440' ? 'selected' : ''}>24 ч</option>
+            </select>
+            <p><strong>CPU:</strong> <canvas id="cpu-${server.id}" class="metric-chart"></canvas></p>
+            <p><strong>Память:</strong> <canvas id="mem-${server.id}" class="metric-chart"></canvas></p>
+            <p><strong>Диски:</strong></p>
+            <div id="disks-${server.id}"></div>
+            <p><strong>Службы:</strong></p>
+            <ul id="services-${server.id}"></ul>
+          </div>
+          <div class="card-bottom">
+            <p class="p-center"><a class="href-center" href="edit_server.php?id=${server.id}" class="edit-button">✏️ Редактировать</a></p>
+          </div>
         `;
 
         container.appendChild(div);

@@ -1,51 +1,32 @@
-<head>
-	<style>
-		nav {
-		  display: flex;
-		  align-items: center;
-		  justify-content: flex-start; 
-		  padding: 10px 20px;
-		  background-color: #f5f5f5;
-		}
-		
-		nav h1 {
-		  margin: 0;
-		  font-size: 20px;
-		  margin-right: 20px; 
-		}
-		
-		nav .nav-links {
-		  display: flex;
-		  gap: 15px;
-		}
-		
-		nav .nav-links a {
-		  text-decoration: none;
-		  color: #0077cc;
-		  font-weight: 500;
-		}
-		
-		nav .nav-links a:hover {
-		  text-decoration: underline;
-		}
-	</style>
-</head>
+<?php
+if (!defined('SITE_TITLE')) {
+    define('SITE_TITLE', '📡 Заголовок по умолчанию');
+}
+?>
+
+<!-- Bootstrap Navbar -->
 <header>
-  <nav>
-    <h1>
-      <a href="/adminis/index.php" style="text-decoration: none; color: inherit;">
-        <?= defined('SITE_TITLE') ? SITE_TITLE : '📡 Заголовок по умолчанию' ?>
-      </a>
-    </h1>
-    <div class="nav-links">
-      <a href="/adminis/map">🗺 Карта сети</a>
-      <a href="/adminis/rooms/">🏫 Кабинеты</a>
-	  <a href="/adminis/monitor/">🖥 Мониторинг</a>
-      <a href="/adminis/laptops/">💻 Ноутбуки</a>
-      <a href="/adminis/docs/">📘 Документация</a>
-      <a href="/adminis/logout.php">🚪 Выход</a> 
+  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom px-4 py-2">
+    <a class="navbar-brand fw-bold me-4" href="/adminis/index.php">
+      <?= SITE_TITLE ?>
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar" aria-expanded="false" aria-label="Переключить навигацию">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="/adminis/map">🗺 Карта сети</a></li>
+        <li class="nav-item"><a class="nav-link" href="/adminis/rooms/">🏫 Кабинеты</a></li>
+        <li class="nav-item"><a class="nav-link" href="/adminis/monitor/">🖥 Мониторинг</a></li>
+        <li class="nav-item"><a class="nav-link" href="/adminis/laptops/">💻 Ноутбуки</a></li>
+        <li class="nav-item"><a class="nav-link" href="/adminis/docs/">📘 Документация</a></li>
+      </ul>
+      <span class="navbar-text">
+        <a class="btn btn-outline-danger btn-sm" href="/adminis/logout.php">🚪 Выход</a>
+      </span>
     </div>
   </nav>
-  <hr>
 </header>
-

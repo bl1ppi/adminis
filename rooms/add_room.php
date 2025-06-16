@@ -24,26 +24,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Добавить кабинет</title>
- 	<link rel="stylesheet" href="../includes/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
-    <h1>Добавление кабинета</h1>
 
-    <?php if (!empty($error)): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
 
-    <form method="post">
-        <label>Название кабинета:<br>
-            <input type="text" name="name" required>
-        </label><br><br>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 m-0">Добавление кабинета</h1>
+                </div>
 
-        <label>Описание (необязательно):<br>
-            <textarea name="description" rows="4" cols="50"></textarea>
-        </label><br><br>
+                <?php if (!empty($error)): ?>
+                    <div class="alert alert-danger">
+                        <?= htmlspecialchars($error) ?>
+                    </div>
+                <?php endif; ?>
 
-        <button type="submit">Сохранить</button>
-        <a href="index.php">Отмена</a>
-    </form>
+                <form method="post" class="card card-body shadow-sm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название кабинета <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="name" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание (необязательно)</label>
+                        <textarea name="description" id="description" rows="4" class="form-control"></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-4">
+                        <button type="submit" class="btn btn-outline-success">💾 Сохранить</button>
+                        <a href="index.php" class="btn btn-outline-secondary">🚫 Отмена</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </body>
 </html>

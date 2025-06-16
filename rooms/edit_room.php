@@ -10,7 +10,6 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $room_id = (int) $_GET['id'];
 
-// Получаем данные кабинета
 $stmt = $pdo->prepare("SELECT * FROM rooms WHERE id = ?");
 $stmt->execute([$room_id]);
 $room = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -28,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Название кабинета не может быть пустым.";
         } else {
             updateRoom($pdo, $room_id, $name, $description);
-            header("Location: index.php");
+            header("Location: room.php?id=$room_id");
             exit;
         }
     }
@@ -41,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['delete'])) {
         deleteRoom($pdo, $room_id);
-        header("Location: index.php");
+        header("Location: room.php");
         exit;
     }
 }
@@ -52,33 +51,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Редактировать кабинет</title>
-    <link rel="stylesheet" href="../includes/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Редактировать кабинет</h1>
 
-    <?php if (!empty($error)): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
 
-    <form method="post">
-        <label>Название кабинета:<br>
-            <input type="text" name="name" value="<?= htmlspecialchars($room['name']) ?>" required>
-        </label><br><br>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 m-0">Редактировать кабинет</h1>
+                </div>
 
-        <label>Описание:<br>
-            <textarea name="description" rows="4" cols="50"><?= htmlspecialchars($room['description']) ?></textarea>
-        </label><br><br>
+                <?php if (!empty($error)): ?>
+                    <div class="alert alert-danger">
+                        <?= htmlspecialchars($error) ?>
+                    </div>
+                <?php endif; ?>
 
-        <button type="submit" name="update">💾 Сохранить</button>
-        <form method="post" style="margin-top:20px;">
-            <button type="submit" name="duplicate">📄 Дублировать кабинет</button>
-            <a href="index.php">Отмена</a>
-        </form>
-    </form>
+                <form method="post" class="card card-body shadow-sm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название кабинета</label>
+                        <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($room['name']) ?>" required>
+                    </div>
 
-    <form method="post" onsubmit="return confirm('Вы действительно хотите удалить кабинет и все его устройства?');" style="margin-top:20px;">
-        <button type="submit" name="delete">🗑️ Удалить кабинет</button>
-    </form>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="description" name="description" rows="4"><?= htmlspecialchars($room['description']) ?></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-4">
+                        <button type="submit" name="update" class="btn btn-outline-success">💾 Сохранить</button>
+                        <button type="submit" name="delete" class="btn btn-outline-danger" onclick="return confirm('Вы действительно хотите удалить кабинет и все его устройства?');">🗑 Удалить</button>
+                        <button type="submit" name="duplicate" class="btn btn-outline-secondary">📄 Дублировать</button>
+                        <a href="room.php?id=<?= $room_id ?>" class="btn btn-outline-secondary">🚫 Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

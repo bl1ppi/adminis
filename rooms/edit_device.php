@@ -102,93 +102,107 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['duplicate'])) {
 <head>
     <meta charset="UTF-8">
     <title>Редактирование устройства</title>
-    <link rel="stylesheet" href="../includes/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-<h1>Редактирование: <?= htmlspecialchars($device['name']) ?></h1>
-<p><strong>Кабинет:</strong> <?= htmlspecialchars($device['room_name']) ?></p>
+<div class="container py-4">
+    <h1 class="mb-4 text-center">Редактирование <?= htmlspecialchars($device['name']) ?>, кабинет <?= htmlspecialchars($device['room_name']) ?></h1>
 
-<?php if (!empty($error)): ?>
-    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
-<?php endif; ?>
+    <?php if (!empty($error)): ?>
+        <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
 
-<form method="post">
-    <label>Название:<br>
-        <input type="text" name="name" value="<?= htmlspecialchars($device['name']) ?>" required>
-    </label><br><br>
+    <form method="post" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Название устройства</label>
+            <input type="text" name="name" value="<?= htmlspecialchars($device['name']) ?>" class="form-control" required>
+        </div>
 
-    <label>Тип:<br>
-        <select name="type" id="type-select" required>
-            <?php
-            $types = ['ПК', 'Сервер', 'Принтер', 'Маршрутизатор', 'Свитч', 'МФУ', 'Интерактивная доска', 'Прочее'];
-            foreach ($types as $type) {
-                $selected = ($type === $device['type']) ? 'selected' : '';
-                echo "<option $selected>$type</option>";
-            }
-            ?>
-        </select>
-    </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">Тип устройства</label>
+            <select name="type" id="type-select" class="form-control" required>
+                <?php
+                $types = ['ПК', 'Сервер', 'Принтер', 'Маршрутизатор', 'Свитч', 'МФУ', 'Интерактивная доска', 'Прочее'];
+                foreach ($types as $type) {
+                    $selected = ($type === $device['type']) ? 'selected' : '';
+                    echo "<option $selected>$type</option>";
+                }
+                ?>
+            </select>
+        </div>
 
-    <label>Иконка:<br>
-        <div id="icon-container"><p>Загрузка...</p></div>
-        <input type="hidden" name="icon" id="icon-input" value="<?= htmlspecialchars($device['icon']) ?>">
-    </label><br><br>
+        <div class="col-12">
+            <label class="form-label">Иконка устройства</label>
+            <div id="icon-container" class="border rounded p-2 bg-light">
+                <p class="text-muted m-0">Сначала выберите тип устройства</p>
+            </div>
+            <input type="hidden" name="icon" id="icon-input" value="<?= htmlspecialchars($device['icon']) ?>">
+        </div>
 
-    <label>IP-адрес:<br>
-        <input type="text" name="ip" value="<?= htmlspecialchars($device['ip']) ?>">
-    </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">IP-адрес</label>
+            <input type="text" name="ip" class="form-control" value="<?= htmlspecialchars($device['ip']) ?>">
+        </div>
 
-    <label>MAC-адрес:<br>
-        <input type="text" name="mac" value="<?= htmlspecialchars($device['mac']) ?>">
-    </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">MAC-адрес</label>
+            <input type="text" name="mac" class="form-control" value="<?= htmlspecialchars($device['mac']) ?>">
+        </div>
 
-    <label>Инвентарный номер:<br>
-        <input type="text" name="inventory_number" value="<?= htmlspecialchars($device['inventory_number']) ?>">
-    </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">Инвентарный номер</label>
+            <input type="text" name="inventory_number" class="form-control" value="<?= htmlspecialchars($device['inventory_number']) ?>">
+        </div>
 
-    <label>Статус:<br>
-        <select name="status">
-            <?php
-            $statuses = ['В работе', 'На ремонте', 'Списан', 'На хранении', 'Числится за кабинетом'];
-            foreach ($statuses as $status) {
-                $selected = ($status === $device['status']) ? 'selected' : '';
-                echo "<option $selected>$status</option>";
-            }
-            ?>
-        </select>
-    </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">Статус</label>
+            <select name="status" class="form-select">
+                <?php
+                $statuses = ['В работе', 'На ремонте', 'Списан', 'На хранении', 'Числится за кабинетом'];
+                foreach ($statuses as $status) {
+                    $selected = ($status === $device['status']) ? 'selected' : '';
+                    echo "<option $selected>$status</option>";
+                }
+                ?>
+            </select>
+        </div>
 
-    <label>Комментарий:<br>
-        <textarea name="comment" rows="4" cols="50"><?= htmlspecialchars($device['comment']) ?></textarea>
-    </label><br><br>
+        <div class="col-12">
+            <label class="form-label">Комментарий</label>
+            <textarea name="comment" rows="4" class="form-control"><?= htmlspecialchars($device['comment']) ?></textarea>
+        </div>
 
-    <label>Кабинет подключения:<br>
-        <select id="room-select">
-            <option value="">-- Выберите кабинет --</option>
-            <?php
-            $rooms = $pdo->query("SELECT id, name FROM rooms ORDER BY name")->fetchAll();
-            foreach ($rooms as $r) {
-                $sel = ($r['id'] == $connected_room_id) ? 'selected' : '';
-                echo "<option value=\"{$r['id']}\" $sel>{$r['name']}</option>";
-            }
-            ?>
-        </select>
-    </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">Подключено к (кабинет)</label>
+            <select id="room-select" name="room_select" class="form-select">
+                <option value="">-- Выберите кабинет --</option>
+                <?php
+                $rooms = $pdo->query("SELECT id, name FROM rooms ORDER BY name")->fetchAll();
+                foreach ($rooms as $r) {
+                    $sel = ($r['id'] == $connected_room_id) ? 'selected' : '';
+                    echo "<option value=\"{$r['id']}\" $sel>{$r['name']}</option>";
+                }
+                ?>
+            </select>
+        </div>
 
-    <label>Устройство в кабинете:<br>
-        <select name="connected_to_device_id" id="device-select">
-            <option value="">-- Сначала выберите кабинет --</option>
-        </select>
-    </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">Устройство в кабинете</label>
+            <select name="connected_to_device_id" id="device-select" class="form-select">
+                <option value="">-- Сначала выберите кабинет --</option>
+            </select>
+        </div>
 
-    <button type="submit" name="update">💾 Сохранить</button>
-    <button type="submit" name="duplicate">📋 Дублировать</button>
-    <a href="room.php?id=<?= $device['room_id'] ?>">↩️ Отмена</a>
-</form>
 
-<form method="post" onsubmit="return confirm('Удалить это устройство?');" style="margin-top:20px;">
-    <button type="submit" name="delete">🗑️ Удалить устройство</button>
-</form>
+        <div class="col-12 d-flex justify-content-center gap-4 mt-4">
+            <button type="submit" name="update" class="btn btn-outline-success">💾 Сохранить</button>
+            <button type="submit" name="delete" class="btn btn-outline-danger" onclick="return confirm('Удалить это устройство?');">🗑️ Удалить</button>
+            <button type="submit" name="duplicate" class="btn btn-outline-secondary">📋 Дублировать</button>
+            <a href="room.php?id=<?= $device['room_id'] ?>" class="btn btn-outline-secondary">🚫 Отмена</a>
+        </div>
+    </form>
+</div>
 
 <script>
 function loadIcons(type, selected = '') {

@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 require_once '../includes/db.php';
 require_once '../includes/auth.php';
 require_once '../includes/navbar.php';
@@ -67,22 +65,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Добавить устройство в <?= htmlspecialchars($room['name']) ?></title>
-    <link rel="stylesheet" href="../includes/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-    <h1>Добавить устройство в <?= htmlspecialchars($room['name']) ?></h1>
+<div class="container py-4">
+    <h1 class="mb-4 text-center">Добавить устройство в <?= htmlspecialchars($room['name']) ?></h1>
 
     <?php if (!empty($error)): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <form method="post">
-        <label>Название устройства:<br>
-            <input type="text" name="name" required>
-        </label><br><br>
+    <form method="post" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Название устройства</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
 
-        <label>Тип устройства:<br>
-            <select name="type" required>
+        <div class="col-md-6">
+            <label class="form-label">Тип устройства</label>
+            <select name="type" class="form-select" required>
                 <option>ПК</option>
                 <option>Сервер</option>
                 <option>Принтер</option>
@@ -92,112 +94,114 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option>Интерактивная доска</option>
                 <option>Прочее</option>
             </select>
-        </label><br><br>
+        </div>
 
-        <label>Иконка устройства:<br>
-            <div id="icon-container">
-                <p>Сначала выберите тип устройства</p>
+        <div class="col-12">
+            <label class="form-label">Иконка устройства</label>
+            <div id="icon-container" class="border rounded p-2 bg-light">
+                <p class="text-muted m-0">Сначала выберите тип устройства</p>
             </div>
             <input type="hidden" name="icon" id="icon-input">
-        </label><br><br>
+        </div>
 
-        <label>IP-адрес:<br>
-            <input type="text" name="ip">
-        </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">IP-адрес</label>
+            <input type="text" name="ip" class="form-control">
+        </div>
 
-        <label>MAC-адрес:<br>
-            <input type="text" name="mac">
-        </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">MAC-адрес</label>
+            <input type="text" name="mac" class="form-control">
+        </div>
 
-        <label>Инвентарный номер:<br>
-            <input type="text" name="inventory_number">
-        </label><br><br>
+        <div class="col-md-6">
+            <label class="form-label">Инвентарный номер</label>
+            <input type="text" name="inventory_number" class="form-control">
+        </div>
 
-        <label>Статус:<br>
-            <select name="status">
+        <div class="col-md-6">
+            <label class="form-label">Статус</label>
+            <select name="status" class="form-select">
                 <option selected>В работе</option>
                 <option>На ремонте</option>
                 <option>Списан</option>
                 <option>На хранении</option>
                 <option>Числится за кабинетом</option>
             </select>
-        </label><br><br>
+        </div>
 
-        <label>Комментарий:<br>
-            <textarea name="comment" rows="4" cols="50"></textarea>
-        </label><br><br>
+        <div class="col-12">
+            <label class="form-label">Комментарий</label>
+            <textarea name="comment" rows="4" class="form-control"></textarea>
+        </div>
 
-        <label>Подключено к:<br>
-            <select id="room-select" name="room_select">
+        <div class="col-md-6">
+            <label class="form-label">Подключено к (кабинет)</label>
+            <select id="room-select" name="room_select" class="form-select">
                 <option value="">-- Выберите кабинет --</option>
                 <?php
-                $rooms = $pdo->query("SELECT id, name FROM rooms ORDER BY name")->fetchAll();
                 foreach ($rooms as $r) {
                     echo "<option value=\"{$r['id']}\">{$r['name']}</option>";
                 }
                 ?>
             </select>
-        </label><br><br>
-        
-        <label>Устройство в кабинете:<br>
-            <select name="connected_to_device_id" id="device-select">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Устройство в кабинете</label>
+            <select name="connected_to_device_id" id="device-select" class="form-select">
                 <option value="">-- Сначала выберите кабинет --</option>
             </select>
-        </label><br><br>
-        
-        <button type="submit">Добавить</button>
-        <a href="room.php?id=<?= $room_id ?>">Отмена</a>
+        </div>
+
+        <div class="col-12 d-flex justify-content-center gap-4 mt-4">
+            <button type="submit" class="btn btn-outline-success">💾 Сохранить</button>
+            <a href="room.php?id=<?= $room_id ?>" class="btn btn-outline-secondary">🚫 Отмена</a>
+        </div>
     </form>
-
-<script>
-function loadIcons(type, selected = '') {
-    fetch('../load_icons.php?type=' + encodeURIComponent(type))
-        .then(response => response.text())
-        .then(html => {
-            const container = document.getElementById('icon-container');
-            container.innerHTML = html;
-            document.querySelectorAll('.icon-option').forEach(img => {
-                img.addEventListener('click', () => {
-                    document.getElementById('icon-input').value = img.dataset.filename;
-                    document.querySelectorAll('.icon-option').forEach(i => i.style.border = '');
-                    img.style.border = '2px solid green';
+ </div>
+    <script>
+    function loadIcons(type, selected = '') {
+        fetch('../load_icons.php?type=' + encodeURIComponent(type))
+            .then(response => response.text())
+            .then(html => {
+                const container = document.getElementById('icon-container');
+                container.innerHTML = html;
+                document.querySelectorAll('.icon-option').forEach(img => {
+                    img.addEventListener('click', () => {
+                        document.getElementById('icon-input').value = img.dataset.filename;
+                        document.querySelectorAll('.icon-option').forEach(i => i.classList.remove('border-success'));
+                        img.classList.add('border', 'border-success');
+                    });
                 });
-            });
 
-            // Если уже выбран — выделяем
-            if (selected) {
-                const selectedImg = document.querySelector(`.icon-option[data-filename="${selected}"]`);
-                if (selectedImg) {
-                    selectedImg.style.border = '2px solid green';
+                if (selected) {
+                    const selectedImg = document.querySelector(`.icon-option[data-filename="${selected}"]`);
+                    if (selectedImg) selectedImg.classList.add('border', 'border-success');
                 }
-            }
-        });
-}
+            });
+    }
 
-// Загрузка иконок при изменении типа
-document.querySelector('select[name="type"]').addEventListener('change', function () {
-    const type = this.value;
-    loadIcons(type);
-});
+    document.querySelector('select[name="type"]').addEventListener('change', function () {
+        loadIcons(this.value);
+    });
 
-// Загрузка иконок сразу при загрузке страницы (по умолчанию ПК)
-document.addEventListener('DOMContentLoaded', () => {
-    const defaultType = document.querySelector('select[name="type"]').value;
-    loadIcons(defaultType);
-});
+    document.addEventListener('DOMContentLoaded', () => {
+        const defaultType = document.querySelector('select[name="type"]').value;
+        loadIcons(defaultType);
+    });
 
-// Загрузка списка устройств по кабинету
-document.getElementById('room-select').addEventListener('change', function () {
-    const roomId = this.value;
-    const deviceSelect = document.getElementById('device-select');
-    deviceSelect.innerHTML = '<option>Загрузка...</option>';
+    document.getElementById('room-select').addEventListener('change', function () {
+        const roomId = this.value;
+        const deviceSelect = document.getElementById('device-select');
+        deviceSelect.innerHTML = '<option>Загрузка...</option>';
 
-    fetch('../load_devices_by_room.php?room_id=' + roomId)
-        .then(res => res.text())
-        .then(html => {
-            deviceSelect.innerHTML = html || '<option>Нет устройств в кабинете</option>';
-        });
-});
-</script>
+        fetch('../load_devices_by_room.php?room_id=' + roomId)
+            .then(res => res.text())
+            .then(html => {
+                deviceSelect.innerHTML = html || '<option>Нет устройств в кабинете</option>';
+            });
+    });
+    </script>
 </body>
 </html>

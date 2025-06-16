@@ -6,62 +6,82 @@ require_once '../includes/navbar.php';
 
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>Карта сети</title>
-  <link rel="stylesheet" href="../includes/style.css">
-  <script src="https://unpkg.com/gojs/release/go.js"></script>
-  <script src="https://unpkg.com/pdfkit/js/pdfkit.standalone.js"></script>
-  <script src="https://unpkg.com/blob-stream"></script>
-  <script src="https://unpkg.com/svg-to-pdfkit/source.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <style>
-    html, body { margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
-    .layout-wrapper { display: flex; height: calc(100vh - 50px); }
-    .sidebar {
-      width: 280px;
-      padding: 10px;
-      background: #f4f4f4;
-      border-right: 1px solid #ccc;
-      box-sizing: border-box;
-      overflow-y: auto;
-    }
-    .diagram-container { flex-grow: 1; }
-    .sidebar label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-    .sidebar input, .sidebar select {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-    #myDiagramDiv {
-      width: 100%;
-      height: 100%;
-    }
-  </style>
-</head>
+  <head>
+      <meta charset="UTF-8">
+      <title>Карта сети</title>
+      <!-- Bootstrap 5 CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://unpkg.com/gojs/release/go.js"></script>
+      <script src="https://unpkg.com/pdfkit/js/pdfkit.standalone.js"></script>
+      <script src="https://unpkg.com/blob-stream"></script>
+      <script src="https://unpkg.com/svg-to-pdfkit/source.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+      <style>
+        html, body { margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
+        .layout-wrapper { display: flex; height: calc(100vh - 50px); }
+        .sidebar {
+          width: 280px;
+          padding: 10px;
+          background: #f4f4f4;
+          border-right: 1px solid #ccc;
+          box-sizing: border-box;
+          overflow-y: auto;
+        }
+        .diagram-container { flex-grow: 1; }
+        .sidebar label {
+          font-weight: bold;
+          margin-top: 10px;
+          display: block;
+        }
+        .sidebar input, .sidebar select {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+        #myDiagramDiv {
+          width: 100%;
+          height: 100%;
+        }
+        #layoutSettings {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          gap: 5px 10px;
+          align-items: center;
+        }
+        #layoutSettings label {
+          margin: 0;
+          font-weight: normal;
+        }
+        #layoutSettings input,
+        #layoutSettings select {
+          margin-bottom: 0;
+        }
+      </style>
+  </head>
 <body>
 
-<div class="layout-wrapper">
-  <div class="sidebar">
-    <h3>⚙️ Настройки схемы</h3>
+<div class="container-fluid">
+  <div class="row" style="height: calc(100vh - 56px);">
+    <div class="col-md-3 bg-light border-end p-3 overflow-auto">
+      <h5>⚙️ Настройки схемы</h5>
 
-    <label>Тип раскладки:</label>
-    <select id="layoutType">
-      <option value="GridLayout">Сетка (Grid)</option>
-      <option value="LayeredDigraphLayout" selected>Слоистая (Layered)</option>
-      <option value="ForceDirectedLayout">Силовая (Force)</option>
-    </select>
-    <div id="layoutSettings"></div>
+      <label for="layoutType" class="form-label">Тип раскладки:</label>
+      <select id="layoutType" class="form-select mb-3">
+        <option value="GridLayout">Сетка (Grid)</option>
+        <option value="LayeredDigraphLayout" selected>Слоистая (Layered)</option>
+        <option value="ForceDirectedLayout">Силовая (Force)</option>
+      </select>
 
-    <button onclick="downloadFullMap()">📄 Скачать PDF (вся схема)</button>
-  </div>
+      <div id="layoutSettings" class="mb-3"></div>
 
-  <div class="diagram-container">
-    <div id="myDiagramDiv"></div>
+      <button class="btn btn-outline-primary w-100" onclick="downloadFullMap()">
+        📄 Скачать PDF (вся схема)
+      </button>
+    </div>
+
+    <div class="col-md-9 p-0">
+      <div id="myDiagramDiv" style="width: 100%; height: 100%;"></div>
+    </div>
   </div>
 </div>
 
@@ -293,5 +313,7 @@ function downloadFullMap() {
 
 renderLayoutForm('LayeredDigraphLayout');
 </script>
+  <!-- Bootstrap 5 JS (необязательно, но полезно для компонентов) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
