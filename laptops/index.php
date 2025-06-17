@@ -86,6 +86,7 @@ $laptops = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     </style>
 </head>
+
 <body>
 <div class="layout-wrapper">
     <div class="sidebar min-vh-100 bg-light p-3">
@@ -142,7 +143,7 @@ $laptops = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h1 class="mb-2">Учёт ноутбуков</h1>
 
         <div class="mb-4">
-            <a href="add_laptop.php" class="btn btn-outline-primary">➕ Выдать ноутбук</a>
+            <a href="add_laptop.php" class="btn btn-outline-success">➕ Выдать ноутбук</a>
             <a href="teachers.php" class="btn btn-outline-primary">👨‍🏫 Преподаватели</a>
         </div>
         

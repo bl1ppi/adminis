@@ -48,7 +48,7 @@ $devices = getDevicesByRoom($pdo, $room_id);
 <body>
 <div class="container-fluid py-4">
     <div class="container table-container">
-        <div class="mb-4">    
+        <div class="mb-4">
             <h1 class="mb-3"><?= htmlspecialchars($room['name']) ?></h1>
             <a href="index.php" class="btn btn-outline-secondary btn-sm">← Назад к кабинетам</a>
             <a href="edit_room.php?id=<?= $room_id ?>" class="btn btn-outline-success btn-sm">Редактировать комнату</a>

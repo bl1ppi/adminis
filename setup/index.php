@@ -54,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $adminUser = $_POST['admin_user'] ?? '';
         $adminPass = $_POST['admin_pass'] ?? '';
         $siteTitle = $_POST['site_title'] ?? '📡 Учёт и визуализация сети';
+        $appVersion = '1.1.0';
 
         try {
             // DSN и проверка существования базы
@@ -299,6 +300,7 @@ define('DB_PASS', '$pass');
 define('ADMIN_LOGIN', '$adminUser');
 define('ADMIN_PASSWORD', '$adminPass');
 define('SITE_TITLE', '$siteTitle');
+define('APP_VERSION', '$appVersion');
 PHP;
             $configSaved = @file_put_contents($configFile, $configData);
 
@@ -307,7 +309,7 @@ PHP;
                 $success = true;
             } else {
                 $manualConfig = htmlspecialchars($configData);
-                $error = "⚠️ Не удалось создать файл <code>cincludes/config.php</code>. Создайте его вручную и вставьте следующий код:";
+                $error = "⚠️ Не удалось создать файл includes/config.php; Создайте его вручную и вставьте следующий код:";
             }
 
         } catch (Exception $e) {
@@ -317,173 +319,124 @@ PHP;
 }
 ?>
 
-
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Установка Adminis</title>
-    <style>
-		body {
-		  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-		  background-color: #f7f9fc;
-		  margin: 0;
-		  padding: 0;
-		  height: 100vh;
-		  color: #333;
-		  display: flex;            
-		  justify-content: center;  
-		  align-items: flex-start;  
-		  padding-top: 40px;
-		  box-sizing: border-box;
-		}
-		
-		.container {
-		  background-color: #ffffff;
-		  padding: 40px;
-		  border-radius: 12px;
-		  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-		  width: 100%;
-		  max-width: 700px;
-		  box-sizing: border-box;
-		  display: flex;
-		  flex-direction: column;  
-		  gap: 16px;
-		}
-		
-		h1,h2,h3 {
-		  margin: 0;
-		  font-size: 24px;
-		  text-align: center;
-		  color: #222;
-		}
-		
-		p {
-		  text-align: center;
-		  margin: 0;
-		  color: #555;
-		}
-		
-		form {
-		  display: flex;
-		  flex-direction: column;
-		  gap: 10px;
-		}
-			
-		label {
-		  font-weight: 600;
-		  margin-bottom: 6px;
-		  display: block;
-		}
-		
-		input[type="text"],
-		input[type="password"],
-		input[type="email"],
-		select {
-		  padding: 10px;
-		  border: 1px solid #ccc;
-		  border-radius: 6px;
-		  width: 100%;
-		  box-sizing: border-box;
-		}
-		
-		button {
-		  padding: 10px 15px;
-		  background-color: #0077cc;
-		  color: white;
-		  border: none;
-		  border-radius: 6px;
-		  cursor: pointer;
-		  font-size: 16px;
-		  transition: background-color 0.3s ease;
-		}
-		
-		button:hover {
-		  background-color: #005fa3;
-		}
-		
-		.note {
-		  font-size: 14px;
-		  color: #666;
-		  text-align: center;
-		  margin-top: 10px;
-		}
-    </style>
-    <script>
-        function toggleDbFields() {
-            const dbType = document.querySelector('[name="db_type"]').value;
-            const isSQLite = dbType === 'sqlite';
-            ['host', 'user', 'pass'].forEach(id => {
-                document.getElementById(id).disabled = isSQLite;
-                document.getElementById(id).closest('label').style.display = isSQLite ? 'none' : 'block';
-            });
-        }
-        window.addEventListener('DOMContentLoaded', toggleDbFields);
-    </script>
+  <meta charset="UTF-8">
+  <title>Установка Adminis</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script>
+    function toggleDbFields() {
+      const dbType = document.querySelector('[name="db_type"]').value;
+      const isSQLite = dbType === 'sqlite';
+      ['host', 'user', 'pass'].forEach(id => {
+        document.getElementById(id).disabled = isSQLite;
+        document.getElementById(id).closest('.mb-3').style.display = isSQLite ? 'none' : 'block';
+      });
+    }
+    window.addEventListener('DOMContentLoaded', toggleDbFields);
+  </script>
 </head>
 <body>
-	<div class="container">
-		<h1>Добро пожаловать в мастер установки платформы Adminis.</h1>
-	    <form method="post" action="">
-	        <h2>Проверка окружения:</h2>
-	        <table>
-	            <?php foreach ($requirements as $check => $result): ?>
-	                <tr>
-	                    <td><?= htmlspecialchars($check) ?></td>
-	                    <td class="<?= $result ? 'ok' : 'fail' ?>">
-	                        <?= $result ? '✅' : '❌' ?>
-	                    </td>
-	                </tr>
-	            <?php endforeach; ?>
-	        </table>
-	        <h3>Подключение к базе данных</h3>
-	        <label>Тип БД:
-	            <select name="db_type" onchange="toggleDbFields()">
-	                <?php foreach ($supported as $type => $available): ?>
-	                    <option value="<?= $type ?>" <?= $available ? '' : 'disabled' ?>>
-	                        <?= strtoupper($type) ?> <?= $available ? '' : '(недоступно)' ?>
-	                    </option>
-	                <?php endforeach; ?>
-	            </select>
-	        </label>
-	        <label>Хост:
-	            <input type="text" name="host" id="host" placeholder="localhost">
-	        </label>
-	        <label>Имя базы данных / файл:
-	            <input type="text" name="dbname" required>
-	        </label>
-	        <label>Пользователь:
-	            <input type="text" name="user" id="user">
-	        </label>
-	        <label>Пароль:
-	            <input type="password" name="pass" id="pass">
-	        </label>
-
-			<label>Заголовок сайта:
-			    <input type="text" name="site_title" value="📡 Учёт и визуализация сети" required>
-			</label>
-
-	        <h3>Настройка администратора</h3>
-	        <label>Логин:
-	            <input type="text" name="admin_user" required>
-	        </label>
-	        <label>Пароль:
-	            <input type="password" name="admin_pass" required>
-	        </label>
-
-	        <button type="submit">Установить Adminis</button>
-	        <?php if ($success): ?>
-	            <h3>✅ Установка завершена!</h3>
-	            <p><a href="../index.php">Перейти к сайту</a></p>
-	        <?php elseif ($error): ?>
-	            <div style="background: #ffecec; border: 1px solid #ff5c5c; padding: 10px; border-radius: 6px; margin-top: 15px;">
-	                <?= $error ?>
-	            </div>
-	            <?php if (isset($manualConfig)): ?>
-	                <pre style="background:#f4f4f4; padding:10px; border-radius:6px; overflow:auto;"><?= $manualConfig ?></pre>
-	            <?php endif; ?>
-	        <?php endif; ?>
-	    </form>
+  <div class="container py-5" style="max-width: 720px;">
+    <div class="text-center mb-4">
+      <h1 class="h3">🚀 Установка платформы Adminis</h1>
+      <p class="text-muted">Добро пожаловать в мастер установки</p>
     </div>
+
+    <form method="post" action="">
+      <div class="mb-4">
+        <h4 class="text-center">✅ Проверка окружения</h4>
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th>Компонент</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($requirements as $check => $result): ?>
+              <tr>
+                <td><?= htmlspecialchars($check) ?></td>
+                <td><?= $result ? '✅' : '❌' ?></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mb-4">
+        <h4 class="text-center">⚙️ Настройки базы данных</h4>
+        <div class="mb-3">
+          <label class="form-label">Тип БД</label>
+          <select name="db_type" class="form-select" onchange="toggleDbFields()">
+            <?php foreach ($supported as $type => $available): ?>
+              <option value="<?= $type ?>" <?= $available ? '' : 'disabled' ?>>
+                <?= strtoupper($type) ?> <?= $available ? '' : '(недоступно)' ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Хост</label>
+          <input type="text" class="form-control" name="host" id="host" placeholder="localhost">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Имя базы данных / файл</label>
+          <input type="text" class="form-control" name="dbname" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Пользователь</label>
+          <input type="text" class="form-control" name="user" id="user">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Пароль</label>
+          <input type="password" class="form-control" name="pass" id="pass">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Заголовок сайта</label>
+          <input type="text" class="form-control" name="site_title" value="📡 Учёт и визуализация сети" required>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h4 class="text-center">🔐 Данные администратора</h4>
+        <div class="mb-3">
+          <label class="form-label">Логин</label>
+          <input type="text" class="form-control" name="admin_user" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Пароль</label>
+          <input type="password" class="form-control" name="admin_pass" required>
+        </div>
+      </div>
+
+      <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+        <?php if (isset($manualConfig)): ?>
+          <pre class="bg-light p-3 border rounded"><?= $manualConfig ?></pre>
+        <?php endif; ?>
+      <?php endif; ?>
+
+      <?php if ($success): ?>
+        <div class="alert alert-success text-center">
+          ✅ Установка завершена!
+          <div class="mt-3">
+            <a href="../index.php" class="btn btn-outline-success">Перейти к сайту</a>
+          </div>
+        </div>
+      <?php else: ?>
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary">Установить Adminis</button>
+        </div>
+      <?php endif; ?>
+    </form>
+  </div>
 </body>
 </html>

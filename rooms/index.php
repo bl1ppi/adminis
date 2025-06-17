@@ -106,6 +106,9 @@ $roomList = getRoomList($pdo);
 
         <?php if (count($rooms) === 0): ?>
             <p class="text-center">Кабинеты пока не добавлены.</p>
+            <div class="text-center">
+                <a class="btn btn-outline-success" href="add_room.php">Добавить кабинет</a>
+            </div>
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-sm table-bordered table-hover align-middle">

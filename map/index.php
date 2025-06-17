@@ -19,14 +19,14 @@ require_once '../includes/navbar.php';
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
       <style>
         html, body { margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
-        .layout-wrapper { display: flex; height: calc(100vh - 50px); }
+        .layout-wrapper {
+            display: flex;
+        }
         .sidebar {
-          width: 280px;
-          padding: 10px;
-          background: #f4f4f4;
-          border-right: 1px solid #ccc;
-          box-sizing: border-box;
-          overflow-y: auto;
+            min-width: 250px;
+            max-width: 250px;
+            padding: 20px;
+            border-right: 1px solid #dee2e6;
         }
         .diagram-container { flex-grow: 1; }
         .sidebar label {
@@ -58,30 +58,32 @@ require_once '../includes/navbar.php';
         }
       </style>
   </head>
+
 <body>
+<div class="layout-wrapper">
+  <div class="sidebar min-vh-100 bg-light p-3 border-end">
+    <form>
+      <h5 class="mb-3">⚙️ Настройки схемы</h5>
 
-<div class="container-fluid">
-  <div class="row" style="height: calc(100vh - 56px);">
-    <div class="col-md-3 bg-light border-end p-3 overflow-auto">
-      <h5>⚙️ Настройки схемы</h5>
-
-      <label for="layoutType" class="form-label">Тип раскладки:</label>
-      <select id="layoutType" class="form-select mb-3">
-        <option value="GridLayout">Сетка (Grid)</option>
-        <option value="LayeredDigraphLayout" selected>Слоистая (Layered)</option>
-        <option value="ForceDirectedLayout">Силовая (Force)</option>
-      </select>
+      <div class="mb-3">
+        <label for="layoutType" class="form-label">Тип раскладки:</label>
+        <select id="layoutType" class="form-select">
+          <option value="GridLayout">Сетка (Grid)</option>
+          <option value="LayeredDigraphLayout" selected>Слоистая (Layered)</option>
+          <option value="ForceDirectedLayout">Силовая (Force)</option>
+        </select>
+      </div>
 
       <div id="layoutSettings" class="mb-3"></div>
 
-      <button class="btn btn-outline-primary w-100" onclick="downloadFullMap()">
-        📄 Скачать PDF (вся схема)
+      <button type="button" class="btn btn-outline-primary w-100">
+        📄 Скачать PDF<br><small>(вся схема)</small>
       </button>
-    </div>
+    </form>
+  </div>
 
-    <div class="col-md-9 p-0">
-      <div id="myDiagramDiv" style="width: 100%; height: 100%;"></div>
-    </div>
+  <div class="content p-0" style="flex-grow:1;">
+    <div id="myDiagramDiv" style="width: 100%; height: 100vh;"></div>
   </div>
 </div>
 

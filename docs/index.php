@@ -9,64 +9,60 @@ require_once '../includes/navbar.php';
 <head>
     <meta charset="UTF-8">
     <title>📘 Документация</title>
-    <link rel="stylesheet" href="../includes/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        body {
-            margin: 0;
-            font-family: sans-serif;
-        }
-        .layout {
+        .layout-wrapper {
             display: flex;
-            height: calc(100vh - 50px);
         }
         .sidebar {
-            width: 250px;
-            background: #f0f0f0;
-            border-right: 1px solid #ccc;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-        .sidebar h3 {
-            margin-top: 0;
-        }
-        .sidebar a {
-            display: block;
-            margin: 5px 0;
-            color: #0033cc;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .sidebar a.active {
-            font-weight: bold;
-            color: black;
+            min-width: 250px;
+            max-width: 250px;
+            padding: 20px;
+            border-right: 1px solid #dee2e6;
         }
         .content {
             flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
+            padding: 30px;
         }
-        .content h1 {
-            margin-top: 0;
+        .p-center, .href-center {
+            text-align: center;
+            display: block;
         }
-        .action-links {
-            margin-top: 10px;
+        #doc-list a {
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #212529;
+            transition: background-color 0.2s, color 0.2s;
+            margin-bottom: 5px;
+        }
+        #doc-list a:hover {
+            background-color: #e9ecef;
+            color: #0d6efd;
+            text-decoration: none;
+        }
+        #doc-list a.active {
+            background-color: #d0ebff;
+            color: #0b5ed7;
+            font-weight: 500;
         }
     </style>
 </head>
+
 <body>
-<div class="layout">
-    <div class="sidebar">
-        <h3>📘 Разделы</h3>
-        <div id="doc-list">Загрузка...</div>
-        <hr>
-        <div class="action-links">
-            <a id="edit-link" href="#">✏️ Редактировать</a>
-            <a href="add_docs.php">➕ Добавить раздел</a>
-        </div>
+<div class="layout-wrapper">
+    <div class="sidebar min-vh-100 bg-light p-3">
+        <h5 class="mb-3">📘 Разделы</h5>
+        <div class="mb-3" id="doc-list">Загрузка...</div>
+
+        <a class="btn btn-outline-primary w-100 mb-3" id="edit-link" href="#">✏️ Редактировать</a>
+        <a class="btn btn-outline-success w-100 mb-3" href="add_docs.php">➕ Добавить раздел</a>
     </div>
 
     <div class="content">
-        <h1 id="doc-title">Загрузка...</h1>
+        <h1 class="mb-3" id="doc-title">Загрузка...</h1>
         <div id="doc-content"></div>
     </div>
 </div>

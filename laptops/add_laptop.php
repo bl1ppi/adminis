@@ -38,95 +38,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Выдача ноутбука</title>
-    <link rel="stylesheet" href="../includes/style.css">
-	<script>
-	function toggleDateFields() {
-	    const checkbox = document.getElementById('permanent');
-	    const dateStart = document.getElementById('date_start');
-	    const dateEnd = document.getElementById('date_end');
-	    const labelStart = document.getElementById('label_date_start');
-	    const labelEnd = document.getElementById('label_date_end');
-	    const roomRow = document.getElementById('room_row');
+    <title>Выдача ноутбука преподавателю</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function toggleDateFields() {
+            const checkbox = document.getElementById('permanent');
+            const dateStart = document.getElementById('date_start');
+            const dateEnd = document.getElementById('date_end');
+            const labelStart = document.getElementById('label_date_start');
+            const labelEnd = document.getElementById('label_date_end');
+            const roomRow = document.getElementById('room_row');
 
-	    const isChecked = checkbox.checked;
+            const isChecked = checkbox.checked;
 
-	    dateStart.disabled = isChecked;
-	    dateEnd.disabled = isChecked;
+            dateStart.disabled = isChecked;
+            dateEnd.disabled = isChecked;
 
-	    if (isChecked) {
-	        dateStart.value = '';
-	        dateEnd.value = '';
-	    } else {
-	        const today = new Date().toISOString().split('T')[0];
-	        if (!dateStart.value) dateStart.value = today;
-	        if (!dateEnd.value) dateEnd.value = today;
-	    }
+            if (isChecked) {
+                dateStart.value = '';
+                dateEnd.value = '';
+            } else {
+                const today = new Date().toISOString().split('T')[0];
+                if (!dateStart.value) dateStart.value = today;
+                if (!dateEnd.value) dateEnd.value = today;
+            }
 
-	    labelStart.style.opacity = isChecked ? 0.4 : 1;
-	    labelEnd.style.opacity = isChecked ? 0.4 : 1;
-	    roomRow.style.opacity = isChecked ? 0.4 : 1;
-	}
+            labelStart.style.opacity = isChecked ? 0.4 : 1;
+            labelEnd.style.opacity = isChecked ? 0.4 : 1;
+            roomRow.style.opacity = isChecked ? 0.4 : 1;
+        }
 
-	document.addEventListener('DOMContentLoaded', toggleDateFields);
-	</script>
+        document.addEventListener('DOMContentLoaded', toggleDateFields);
+    </script>
 </head>
 <body>
-    <h1>Выдача ноутбука преподавателю</h1>
+<div class="container py-4">
+    <h1 class="mb-4 text-center">Выдача ноутбука преподавателю</h1>
 
     <?php if ($error): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <form method="post">
-        <label>Номер ноутбука:<br>
-            <input type="number" name="number" min="1" required>
-        </label><br><br>
+    <form method="post" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Номер ноутбука</label>
+            <input type="number" name="number" min="1" required class="form-control">
+        </div>
 
-        <label>ФИО преподавателя:<br>
-            <select name="teacher_id" required>
+        <div class="col-md-6">
+            <label class="form-label">ФИО преподавателя</label>
+            <select name="teacher_id" class="form-select" required>
                 <option value="">-- Выберите --</option>
                 <?php foreach ($teachers as $t): ?>
                     <option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['full_name']) ?></option>
                 <?php endforeach; ?>
             </select>
-        </label><br><br>
+        </div>
 
-		<label>
-			<input type="checkbox" name="is_permanent" id="permanent" onchange="toggleDateFields()">
-			Выдан в постоянное пользование
-		</label><br><br>
+        <div class="col-12">
+            <div class="form-check">
+                <input type="checkbox" name="is_permanent" id="permanent" class="form-check-input" onchange="toggleDateFields()">
+                <label class="form-check-label" for="permanent">Выдан в постоянное пользование</label>
+            </div>
+        </div>
 
-        <label id="room_row">Кабинет:<br>
-            <select name="room_id">
+        <div class="col-md-6" id="room_row">
+            <label class="form-label">Кабинет</label>
+            <select name="room_id" class="form-select">
                 <option value="">-- Не указан --</option>
                 <?php foreach ($rooms as $r): ?>
                     <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
                 <?php endforeach; ?>
             </select>
-        </label><br><br>
+        </div>
 
-		<label id="label_date_start">Дата выдачи:<br>
-		    <input type="date" name="start_date" id="date_start" value="<?= $today ?>">
-		</label><br><br>
+        <div class="col-md-3" id="label_date_start">
+            <label class="form-label">Дата выдачи</label>
+            <input type="date" name="start_date" id="date_start" value="<?= $today ?>" class="form-control">
+        </div>
 
-		<label id="label_date_end">Дата возврата:<br>
-		    <input type="date" name="end_date" id="date_end" value="<?= $today ?>">
-		</label><br><br>
+        <div class="col-md-3" id="label_date_end">
+            <label class="form-label">Дата возврата</label>
+            <input type="date" name="end_date" id="date_end" value="<?= $today ?>" class="form-control">
+        </div>
 
-        <label>Статус:<br>
-            <select name="status">
+        <div class="col-md-6">
+            <label class="form-label">Статус</label>
+            <select name="status" class="form-select">
                 <option value="взят" selected>Взят</option>
                 <option value="сдан">Сдан</option>
             </select>
-        </label><br><br>
+        </div>
 
-        <label>Комментарий:<br>
-            <textarea name="comment" rows="4" cols="50"></textarea>
-        </label><br><br>
+        <div class="col-12">
+            <label class="form-label">Комментарий</label>
+            <textarea name="comment" rows="4" class="form-control"></textarea>
+        </div>
 
-        <button type="submit">Сохранить</button>
-        <a href="index.php">Отмена</a>
+        <div class="col-12 d-flex justify-content-center gap-4 mt-4">
+            <button type="submit" class="btn btn-outline-success">💾 Сохранить</button>
+            <a href="index.php" class="btn btn-outline-secondary">🚫 Отмена</a>
+        </div>
     </form>
+</div>
 </body>
 </html>

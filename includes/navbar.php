@@ -1,10 +1,7 @@
 <?php
-if (!defined('SITE_TITLE')) {
-    define('SITE_TITLE', '📡 Заголовок по умолчанию');
-}
+include_once __DIR__ . 'config.php';
 ?>
 
-<!-- Bootstrap Navbar -->
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom px-4 py-2">
     <a class="navbar-brand fw-bold me-4" href="/adminis/index.php">
@@ -24,7 +21,8 @@ if (!defined('SITE_TITLE')) {
         <li class="nav-item"><a class="nav-link" href="/adminis/laptops/">💻 Ноутбуки</a></li>
         <li class="nav-item"><a class="nav-link" href="/adminis/docs/">📘 Документация</a></li>
       </ul>
-      <span class="navbar-text">
+      <span class="navbar-text d-flex align-items-center">
+        <small class="text-muted me-3"><?= 'adminis' ?> v<?= APP_VERSION ?></small>
         <a class="btn btn-outline-danger btn-sm" href="/adminis/logout.php">🚪 Выход</a>
       </span>
     </div>

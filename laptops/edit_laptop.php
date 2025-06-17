@@ -49,8 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Редактирование ноутбука</title>
-    <link rel="stylesheet" href="../includes/style.css">
+    <title>Редактирование записи о ноутбуке</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
         function toggleDateFields() {
             const checkbox = document.getElementById('permanent');
@@ -74,19 +74,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </head>
 <body>
-    <h1>Редактирование записи о ноутбуке</h1>
+<div class="container py-4">
+    <h1 class="mb-4 text-center">Редактирование записи о ноутбуке</h1>
 
     <?php if ($error): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <form method="post">
-        <label>Номер ноутбука:<br>
-            <input type="number" name="number" min="1" value="<?= htmlspecialchars($laptop['number']) ?>" required>
-        </label><br><br>
+    <form method="post" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Номер ноутбука</label>
+            <input type="number" name="number" min="1" value="<?= htmlspecialchars($laptop['number']) ?>" required class="form-control">
+        </div>
 
-        <label>ФИО преподавателя:<br>
-            <select name="teacher_id" required>
+        <div class="col-md-6">
+            <label class="form-label">ФИО преподавателя</label>
+            <select name="teacher_id" class="form-select" required>
                 <option value="">-- Выберите --</option>
                 <?php foreach ($teachers as $t): ?>
                     <option value="<?= $t['id'] ?>" <?= $t['id'] == $laptop['teacher_id'] ? 'selected' : '' ?>>
@@ -94,15 +97,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
-        </label><br><br>
+        </div>
 
-        <label>
-            <input type="checkbox" name="is_permanent" id="permanent" onchange="toggleDateFields()" <?= $laptop['is_permanent'] ? 'checked' : '' ?>>
-            Выдан в постоянное пользование
-        </label><br><br>
+        <div class="col-12">
+            <div class="form-check">
+                <input type="checkbox" name="is_permanent" id="permanent" class="form-check-input" onchange="toggleDateFields()" <?= $laptop['is_permanent'] ? 'checked' : '' ?>>
+                <label class="form-check-label" for="permanent">Выдан в постоянное пользование</label>
+            </div>
+        </div>
 
-        <label id="room_row">Кабинет:<br>
-            <select name="room_id">
+        <div class="col-md-6" id="room_row">
+            <label class="form-label">Кабинет</label>
+            <select name="room_id" class="form-select">
                 <option value="">-- Не указан --</option>
                 <?php foreach ($rooms as $r): ?>
                     <option value="<?= $r['id'] ?>" <?= $r['id'] == $laptop['room_id'] ? 'selected' : '' ?>>
@@ -110,36 +116,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
-        </label><br><br>
+        </div>
 
-        <label id="label_date_start">Дата выдачи:<br>
-            <input type="date" name="start_date" id="date_start" value="<?= htmlspecialchars($laptop['start_date'] ?? $today) ?>">
-        </label><br><br>
+        <div class="col-md-3" id="label_date_start">
+            <label class="form-label">Дата выдачи</label>
+            <input type="date" name="start_date" id="date_start" value="<?= htmlspecialchars($laptop['start_date'] ?? $today) ?>" class="form-control">
+        </div>
 
-        <label id="label_date_end">Дата возврата:<br>
-            <input type="date" name="end_date" id="date_end" value="<?= htmlspecialchars($laptop['end_date'] ?? $today) ?>">
-        </label><br><br>
+        <div class="col-md-3" id="label_date_end">
+            <label class="form-label">Дата возврата</label>
+            <input type="date" name="end_date" id="date_end" value="<?= htmlspecialchars($laptop['end_date'] ?? $today) ?>" class="form-control">
+        </div>
 
-        <label>Статус:<br>
-            <select name="status">
+        <div class="col-md-6">
+            <label class="form-label">Статус</label>
+            <select name="status" class="form-select">
                 <option value="взят" <?= $laptop['status'] === 'взят' ? 'selected' : '' ?>>Взят</option>
                 <option value="сдан" <?= $laptop['status'] === 'сдан' ? 'selected' : '' ?>>Сдан</option>
             </select>
-        </label><br><br>
+        </div>
 
-        <label>Комментарий:<br>
-            <textarea name="comment" rows="4" cols="50"><?= htmlspecialchars($laptop['comment']) ?></textarea>
-        </label><br><br>
+        <div class="col-12">
+            <label class="form-label">Комментарий</label>
+            <textarea name="comment" rows="4" class="form-control"><?= htmlspecialchars($laptop['comment']) ?></textarea>
+        </div>
 
-        <button type="submit">💾 Сохранить</button>
-        <a href="index.php">Отмена</a>
+        <div class="col-12 d-flex justify-content-center gap-4 mt-4">
+            <button type="submit" class="btn btn-outline-success">💾 Сохранить</button>
+            <button type="submit" name="delete" class="btn btn-outline-danger" onclick="return confirm('Удалить это устройство?');">🗑️ Удалить</button>
+            <a href="index.php" class="btn btn-outline-secondary">🚫 Отмена</a>
+        </div>
     </form>
-
-    <form method="post" onsubmit="return confirm('Вы действительно хотите удалить эту запись?');" style="margin-top: 20px;">
-        <input type="hidden" name="delete" value="1">
-        <button type="submit" style="color: red;">🗑️ Удалить запись</button>
-    </form>
-
-    <script>toggleDateFields();</script>
+</div>
 </body>
 </html>
+

@@ -11,48 +11,52 @@ $teachers = $pdo->query("SELECT * FROM teachers ORDER BY full_name")->fetchAll(P
 <head>
     <meta charset="UTF-8">
     <title>Преподаватели</title>
-    <link rel="stylesheet" href="../includes/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        table { border-collapse: collapse; width: 100%; }
-        th, td { padding: 6px 10px; border: 1px solid #ccc; text-align: left; }
-        th { background-color: #f2f2f2; }
-        a.button {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 6px 12px;
-            background: #e0e0e0;
-            text-decoration: none;
-            border-radius: 4px;
+        td.icon-cell img {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        tr.clickable-row {
+            cursor: pointer;
+        }
+        .table-container {
+            max-width: 80%;
+        }
+        td.comment-cell {
+            max-width: 300px;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
-    <h1>Список преподавателей</h1>
+<div class="container-fluid py-4">
+    <div class="container table-container">
+        <div class="mb-4">
+            <h1 class="mb-3">Список преподавателей</h1>
+            <a href="index.php" class="btn btn-outline-secondary btn-sm">← Назад к ноутбукам</a>
+            <a href="add_teacher.php" class="btn btn-outline-success btn-sm">➕ Добавить преподавателя</a>
+        </div>
 
-    <p>
-        <a href="add_teacher.php" class="button">➕ Добавить преподавателя</a>
-        <a href="index.php" class="button">↩️ Назад к ноутбукам</a>
-    </p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>ФИО</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($teachers as $t): ?>
+        <table class="table table-bordered table-sm table-hover align-middle">
+            <thead class="table-light text-center">
                 <tr>
-                    <td><?= $t['id'] ?></td>
-                    <td>
-                        <a href="edit_teacher.php?id=<?= $t['id'] ?>">
-                            <?= htmlspecialchars($t['full_name']) ?>
-                        </a>
-                    </td>
+                    <th>ID</th>
+                    <th>ФИО</th>
                 </tr>
-            <?php endforeach ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($teachers as $t): ?>
+                    <tr class="clickable-row" onclick="window.location.href='edit_teacher.php?id=<?= $t['id'] ?>'">
+                        <td><?= $t['id'] ?></td>
+                        <td><?= htmlspecialchars($t['full_name']) ?></td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 </body>
 </html>

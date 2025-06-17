@@ -47,28 +47,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Редактировать преподавателя</title>
-    <link rel="stylesheet" href="../includes/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
         function confirmDelete() {
             return confirm("Вы действительно хотите удалить этого преподавателя?");
         }
     </script>
 </head>
-<body>
-    <h1>Редактировать преподавателя</h1>
 
-    <?php if ($error): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
 
-    <form method="post">
-        <label>ФИО:<br>
-            <input type="text" name="full_name" value="<?= htmlspecialchars($teacher['full_name']) ?>" required>
-        </label><br><br>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 m-0">Редактировать преподавателя</h1>
+                </div>
 
-        <button type="submit">💾 Сохранить</button>
-        <button type="submit" name="delete" onclick="return confirmDelete()" style="margin-left: 10px; color: red;">🗑️ Удалить</button>
-        <a href="teachers.php">Назад</a>
-    </form>
+                <?php if ($error): ?>
+                    <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+                <?php endif; ?>
+
+                <form method="post" class="card card-body shadow-sm">
+                    <div class="mb-3">
+                        <label class="form-label">ФИО:</label>
+                        <input class="form-control" type="text" name="full_name" value="<?= htmlspecialchars($teacher['full_name']) ?>" required>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center gap-4">
+                        <button type="submit" class="btn btn-outline-success">💾 Сохранить</button>
+                        <button type="submit" class="btn btn-outline-danger" name="delete" onclick="return confirmDelete()" style="margin-left: 10px; color: red;">🗑️ Удалить</button>
+                        <a href="teachers.php" class="btn btn-outline-secondary">🚫 Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

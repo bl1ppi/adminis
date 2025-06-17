@@ -20,20 +20,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              VALUES (?, ?, ?, ?)"
         );
         $stmt->execute([$name, $ip, $user, $services]);
-        $success = true;
+        header("Location: index.php");
+        exit;
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8"><title>➕ Добавить сервер</title>
-<link rel="stylesheet" href="../includes/style.css">
+<head>
+  <meta charset="UTF-8">
+  <title>➕ Добавить сервер</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    pre {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #dee2e6;
+    }
+  </style>
 </head>
 <body>
-  <h1>➕ Добавить сервер</h1>
-  <h2 class="setup-title">🔐 Генерация SSH-ключа мониторинга</h2>
-  <pre class="setup-instruction">
+
+<div class="container py-4">
+  <div class="text-center mb-4">
+    <h1 class="h3 mb-3">➕ Добавить сервер</h1>
+  </div>
+
+  <h4 class="mb-3">🔐 Генерация SSH-ключа мониторинга</h4>
+  <pre>
 Выполняется один раз на сервере Adminis (веб-интерфейса).
 
 1. Создайте директорию для ключей мониторинга
@@ -60,8 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         публичный ключ: /etc/monitoring/monitor_id_rsa.pub
   </pre>
-  <h2 class="setup-title">📌 Инструкция по настройке пользователя и SSH</h2>
-  <pre class="setup-instruction">
+  <h4 class="mb-3">📌 Инструкция по настройке пользователя и SSH</h4>
+  
+  <pre>
 ssh root@REMOTE_IP
 
 1. Создайте пользователя monitor с домашней директорией:
@@ -120,22 +137,37 @@ sudo chown www-data:www-data /var/log/monitoring.log
 
 * * * * * php /var/www/html/adminis/modules/monitoring/collect_stats.php >> /var/log/monitoring.log 2>&1
   </pre>
-  <?php if ($success): ?>
-    <p style="color: green;">Сервер добавлен.</p>
-    <p><a href="index.php">← Вернуться</a></p>
-  <?php elseif ($error): ?>
-    <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+
+  <?php if ($error): ?>
+    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
   <?php endif; ?>
 
-  <form method="post">
-    <label>Название:<br><input type="text" name="name" required></label><br><br>
-    <label>IP-адрес:<br><input type="text" name="ip" required></label><br><br>
-    <label>Пользователь (monitor):<br><input type="text" name="user" value="monitor" required></label><br><br>
-    <label>Службы (через запятую):<br><input type="text" name="services"></label><br><br>
-    <button type="submit">💾 Сохранить</button>
-    <a href="index.php">Отмена</a>
-  </form>
+  <form method="post" class="row g-3 mt-4">
+    <div class="col-md-6">
+      <label class="form-label">Название сервера</label>
+      <input type="text" name="name" class="form-control" required>
+    </div>
 
-  <hr>
+    <div class="col-md-6">
+      <label class="form-label">IP-адрес</label>
+      <input type="text" name="ip" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Пользователь</label>
+      <input type="text" name="user" value="monitor" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Службы (через запятую)</label>
+      <input type="text" name="services" class="form-control">
+    </div>
+
+    <div class="col-12 d-flex justify-content-center gap-3 mt-3">
+      <button type="submit" class="btn btn-outline-success">💾 Сохранить</button>
+      <a href="index.php" class="btn btn-outline-secondary">🚫 Отмена</a>
+    </div>
+  </form>
+</div>
 </body>
 </html>

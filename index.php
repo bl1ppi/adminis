@@ -20,15 +20,16 @@ $totalTeachers = $pdo->query("SELECT COUNT(*) FROM teachers")->fetchColumn();
   <meta charset="UTF-8">
   <title>Учёт сети филиала КузГТУ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 
 <div class="container py-4">
-  <h1 class="text-center mb-5"><?= defined('SITE_TITLE') ? SITE_TITLE : '📡 Заголовок по умолчанию' ?></h1>
+  <h1 class="text-center mb-1"><?= defined('SITE_TITLE') ? SITE_TITLE : '📡 Заголовок по умолчанию' ?></h1>
+  <div class="text-center mb-4">
+    <small class="text-muted"><?= 'adminis' ?> v<?= defined('APP_VERSION') ? APP_VERSION : '1.0.0' ?></small>
+  </div>
 
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
     <div class="col">

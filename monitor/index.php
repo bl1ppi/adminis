@@ -9,64 +9,103 @@ require_once '../includes/navbar.php';
 <head>
   <meta charset="UTF-8">
   <title>🖥️ Мониторинг серверов</title>
-  <link rel="stylesheet" href="../includes/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .metric-chart {
+      width: 100% !important;
+      height: 150px !important;
+    }
+    .status-online { color: green; font-weight: bold; }
+    .status-offline { color: red; font-weight: bold; }
+    .server-card {
+      border: 1px solid #dee2e6;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      background-color: #f8f9fa;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+  </style>
 </head>
 <body>
-  <div class="container-server">
-    <h1>📊 Дашборд серверов</h1>
-    <p class="p-center"><a class="href-center" href="add_server.php">➕ Добавить сервер</a></p>
-    <div class="card-grid" id="server-list"></div>
+<div class="container py-4">
+  <div class="text-center mb-4">
+    <h1 class="h3 mb-3">📊 Дашборд серверов</h1>
+    <a href="add_server.php" class="btn btn-outline-success">➕ Добавить сервер</a>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    let chartsData = {};
-    let charts = {};
-    let currentRange = 1440;
+  <div class="card-grid" id="server-list"></div>
+</div>
 
-    function renderServers(data) {
-      const container = document.getElementById('server-list');
-      const savedRanges = {};
+<script>
+  let chartsData = {};
+  let charts = {};
+  let currentRange = 1440;
 
-      // Сохраняем текущие выбранные значения
-      document.querySelectorAll('.range-select').forEach(select => {
-        savedRanges[select.dataset.sid] = select.value;
-      });
+  function renderServers(data) {
+    const container = document.getElementById('server-list');
+    const savedRanges = {};
 
-      container.innerHTML = '';
+    document.querySelectorAll('.range-select').forEach(select => {
+      savedRanges[select.dataset.sid] = select.value;
+    });
 
-      data.forEach(server => {
-        const statusClass = server.status === 'online' ? 'status-online' : 'status-offline';
-        const sid = server.id;
-        const stored = chartsData[sid] || { cpu: [], memory: [] };
-        const selectedRange = savedRanges[sid] || '1440'; // 24 ч по умолчанию
+    container.innerHTML = '';
 
-        const div = document.createElement('div');
-        div.classList.add('server-card');
+    data.forEach(server => {
+      const statusClass = server.status === 'online' ? 'status-online' : 'status-offline';
+      const sid = server.id;
+      const stored = chartsData[sid] || { cpu: [], memory: [] };
+      const selectedRange = savedRanges[sid] || '1440';
 
-        div.innerHTML = `
-          <div class="card-top">
-            <h3>${server.name}</h3>
-            <p><strong>IP:</strong> ${server.ip}</p>
-            <p><strong>Статус:</strong> <span class="${statusClass}">${server.status}</span></p>
-            <label for="range-${sid}"><strong>Период:</strong></label>
-            <select id="range-${sid}" class="range-select" data-sid="${sid}">
-              <option value="30" ${selectedRange === '30' ? 'selected' : ''}>30 мин</option>
-              <option value="60" ${selectedRange === '60' ? 'selected' : ''}>1 ч</option>
-              <option value="240" ${selectedRange === '240' ? 'selected' : ''}>4 ч</option>
-              <option value="1440" ${selectedRange === '1440' ? 'selected' : ''}>24 ч</option>
-            </select>
-            <p><strong>CPU:</strong> <canvas id="cpu-${server.id}" class="metric-chart"></canvas></p>
-            <p><strong>Память:</strong> <canvas id="mem-${server.id}" class="metric-chart"></canvas></p>
-            <p><strong>Диски:</strong></p>
-            <div id="disks-${server.id}"></div>
-            <p><strong>Службы:</strong></p>
-            <ul id="services-${server.id}"></ul>
-          </div>
-          <div class="card-bottom">
-            <p class="p-center"><a class="href-center" href="edit_server.php?id=${server.id}" class="edit-button">✏️ Редактировать</a></p>
-          </div>
-        `;
+      const div = document.createElement('div');
+      div.classList.add('server-card');
+
+      div.innerHTML = `
+        <h5 class="mb-2">${server.name}</h5>
+        <p><strong>IP:</strong> ${server.ip}</p>
+        <p><strong>Статус:</strong> <span class="${statusClass}">${server.status}</span></p>
+
+        <div class="mb-2">
+          <label for="range-${sid}" class="form-label"><strong>Период:</strong></label>
+          <select id="range-${sid}" class="form-select range-select form-select-sm" data-sid="${sid}">
+            <option value="30" ${selectedRange === '30' ? 'selected' : ''}>30 мин</option>
+            <option value="60" ${selectedRange === '60' ? 'selected' : ''}>1 ч</option>
+            <option value="240" ${selectedRange === '240' ? 'selected' : ''}>4 ч</option>
+            <option value="1440" ${selectedRange === '1440' ? 'selected' : ''}>24 ч</option>
+          </select>
+        </div>
+
+        <div class="mb-2">
+          <strong>CPU:</strong>
+          <canvas id="cpu-${sid}" class="metric-chart"></canvas>
+        </div>
+
+        <div class="mb-2">
+          <strong>Память:</strong>
+          <canvas id="mem-${sid}" class="metric-chart"></canvas>
+        </div>
+
+        <div class="mb-2">
+          <strong>Диски:</strong>
+          <div id="disks-${sid}"></div>
+        </div>
+
+        <div class="mb-2">
+          <strong>Службы:</strong>
+          <ul id="services-${sid}" class="mb-2"></ul>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="edit_server.php?id=${server.id}" class="btn btn-outline-primary btn-sm">✏️ Редактировать</a>
+        </div>
+      `;
 
         container.appendChild(div);
 

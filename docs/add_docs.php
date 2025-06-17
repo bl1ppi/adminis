@@ -24,13 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <title>Добавить новый раздел</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-  <link rel="stylesheet" href="../includes/style.css">
   <style>
-    body { font-family: sans-serif; margin: 20px; }
-    input[type="text"] {
-      width: 100%; font-size: 16px; padding: 6px; margin-bottom: 10px;
-    }
     #editor {
       height: 400px;
       background: white;
@@ -44,25 +40,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
 </head>
 <body>
+<div class="container py-4">
+  <h1 class="mb-4 text-center">➕ Новый раздел документации</h1>
 
-<h1>➕ Новый раздел документации</h1>
+  <?php if (!empty($error)): ?>
+    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+  <?php endif; ?>
 
-<?php if (!empty($error)): ?>
-  <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-<?php endif; ?>
+  <form method="post" onsubmit="return submitForm();">
+    <div class="mb-3">
+      <label class="form-label">Название раздела:</label>
+      <input type="text" name="title" class="form-control" required>
+    </div>
 
-<form method="post" onsubmit="return submitForm();">
-  <label>Название раздела:</label><br>
-  <input type="text" name="title" required><br>
+    <div class="mb-3">
+      <label class="form-label">Содержимое:</label>
+      <div id="editor"></div>
+      <input type="hidden" name="content" id="hiddenContent">
+    </div>
 
-  <label>Содержимое:</label><br>
-  <div id="editor"></div>
-
-  <input type="hidden" name="content" id="hiddenContent">
-
-  <button type="submit">💾 Создать</button>
-  <a href="index.php">Отмена</a>
-</form>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="submit" class="btn btn-outline-success">💾 Создать</button>
+      <a href="index.php" class="btn btn-outline-secondary">🚫 Отмена</a>
+    </div>
+  </form>
+</div>
 
 <!-- Quill -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
@@ -72,11 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   });
 
   function submitForm() {
-    const html = quill.root.innerHTML;
-    document.getElementById('hiddenContent').value = html;
+    document.getElementById('hiddenContent').value = quill.root.innerHTML;
     return true;
   }
 </script>
-
 </body>
 </html>
+
