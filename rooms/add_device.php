@@ -15,6 +15,10 @@ $stmt = $pdo->prepare("SELECT * FROM rooms WHERE id = ?");
 $stmt->execute([$room_id]);
 $room = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// Загрузка всех кабинетов для выпадающего списка
+$stmt = $pdo->query("SELECT id, name FROM rooms ORDER BY name");
+$rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 if (!$room) {
     die("Кабинет не найден.");
 }

@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $adminUser = $_POST['admin_user'] ?? '';
         $adminPass = $_POST['admin_pass'] ?? '';
         $siteTitle = $_POST['site_title'] ?? '📡 Учёт и визуализация сети';
-        $appVersion = '1.1.0';
+        $appVersion = '1.1.1';
 
         try {
             // DSN и проверка существования базы

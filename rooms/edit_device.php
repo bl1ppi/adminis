@@ -252,7 +252,7 @@ document.getElementById('room-select').addEventListener('change', function () {
     const deviceSelect = document.getElementById('device-select');
     deviceSelect.innerHTML = '<option>Загрузка...</option>';
 
-    fetch('load_devices_by_room.php?room_id=' + roomId)
+    fetch('../load_devices_by_room.php?room_id=' + roomId)
         .then(res => res.text())
         .then(html => {
             deviceSelect.innerHTML = html || '<option>Нет устройств в кабинете</option>';

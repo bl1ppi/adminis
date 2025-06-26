@@ -25,6 +25,6 @@ $files = glob("$dir/*.png");
 
 foreach ($files as $file) {
     $name = basename($file);
-    $base_path = '/network_inventory'; // если нужно
+    $base_path = '/adminis'; // если нужно
     echo "<img src=\"$base_path/assets/icons/$folder/$name\" class=\"icon-option\" data-filename=\"$name\" style=\"width:64px; height:64px; margin:5px; cursor:pointer;\">";
 }

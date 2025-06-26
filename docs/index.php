@@ -48,6 +48,46 @@ require_once '../includes/navbar.php';
             color: #0b5ed7;
             font-weight: 500;
         }
+        #doc-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        #doc-content h1 {
+            font-size: 24px;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.3rem;
+        }
+        
+        #doc-content h2 {
+            font-size: 20px;
+            margin-top: 1.25rem;
+            margin-bottom: 0.6rem;
+            color: #2c3e50;
+        }
+        
+        #doc-content h3 {
+            font-size: 17px;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            color: #34495e;
+        }
+        
+        #doc-content p {
+            margin-bottom: 0.8rem;
+        }
+        
+        #doc-content ul {
+            margin-bottom: 1rem;
+            padding-left: 1.2rem;
+        }
+        
+        #doc-content li {
+            margin-bottom: 0.4rem;
+        }
     </style>
 </head>
 

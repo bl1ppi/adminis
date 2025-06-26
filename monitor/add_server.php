@@ -123,7 +123,7 @@ sudo crontab -u www-data -e
 
 Добавь в конец файла следующую строку, чтобы запускать сбор данных каждую минуту:
 
-* * * * * php /var/www/html/adminis/modules/monitoring/collect_stats.php
+* * * * * php /var/www/html/adminis/cron/cron_collect.php
 
   ✅ Убедись, что путь к collect_stats.php корректен — от корня файловой системы.
   ✅ Также проверь, что PHP доступен по команде php. Если используется php8.1, замени php на php8.1.
@@ -135,7 +135,7 @@ sudo chown www-data:www-data /var/log/monitoring.log
 
 Тогда команда в cron будет выглядеть так:
 
-* * * * * php /var/www/html/adminis/modules/monitoring/collect_stats.php >> /var/log/monitoring.log 2>&1
+* * * * * php /var/www/html/adminis/cron/cron_collect.php >> /var/log/monitoring.log 2>&1
   </pre>
 
   <?php if ($error): ?>
