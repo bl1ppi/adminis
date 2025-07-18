@@ -16,6 +16,7 @@ require_once '../includes/navbar.php';
     .metric-chart {
       width: 100% !important;
       height: 150px !important;
+      max-height: 150px;
     }
     .status-online { color: green; font-weight: bold; }
     .status-offline { color: red; font-weight: bold; }
@@ -176,11 +177,15 @@ require_once '../includes/navbar.php';
     function renderChart(canvasId, dataArray, label, type = 'line', min = 0, max = 100) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
-
+    
+      // Фиксируем размеры перед пересозданием
+      canvas.height = 150;
+      canvas.width = canvas.clientWidth;
+    
       const ctx = canvas.getContext('2d');
       const timestamps = dataArray.map(p => new Date(p.t * 1000).toLocaleTimeString());
       const values = dataArray.map(p => p.v);
-
+    
       return new Chart(ctx, {
         type: type,
         data: {
@@ -191,13 +196,26 @@ require_once '../includes/navbar.php';
             backgroundColor: type === 'bar' ? 'rgba(100,149,237,0.6)' : 'rgba(54,162,235,0.2)',
             borderColor: 'rgba(54,162,235,1)',
             borderWidth: 1,
-            fill: type !== 'bar'
+            fill: type !== 'bar',
+            pointRadius: 3,
+            pointHoverRadius: 6
           }]
         },
         options: {
           animation: false,
+          maintainAspectRatio: false,
           scales: {
-            y: { min: min, max: max }
+            y: {
+              min: min,
+              max: max,
+              ticks: { stepSize: Math.ceil((max - min) / 4) }
+            }
+          },
+          plugins: {
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
           }
         }
       });

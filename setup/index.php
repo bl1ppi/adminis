@@ -54,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $adminUser = $_POST['admin_user'] ?? '';
         $adminPass = $_POST['admin_pass'] ?? '';
         $siteTitle = $_POST['site_title'] ?? '📡 Учёт и визуализация сети';
-        $appVersion = '1.1.1';
 
         try {
             // DSN и проверка существования базы
@@ -300,7 +299,7 @@ define('DB_PASS', '$pass');
 define('ADMIN_LOGIN', '$adminUser');
 define('ADMIN_PASSWORD', '$adminPass');
 define('SITE_TITLE', '$siteTitle');
-define('APP_VERSION', '$appVersion');
+define('APP_VERSION', require __DIR__ . '/version.php');
 PHP;
             $configSaved = @file_put_contents($configFile, $configData);
 

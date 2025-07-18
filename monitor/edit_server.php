@@ -47,38 +47,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>✏️ Редактировать сервер</title>
-  <link rel="stylesheet" href="../includes/style.css">
+  <title>✏ Редактировать сервер</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    pre {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #dee2e6;
+    }
+  </style>
 </head>
 <body>
-  <h1>✏️ Редактировать сервер</h1>
+
+<div class="container py-4">
+  <div class="text-center mb-4">
+    <h1 class="h3 mb-3">✏ Редактировать сервер</h1>
+  </div>
 
   <?php if ($success): ?>
-    <p style="color: green;">Изменения сохранены.</p>
-    <p><a href="index.php">← Вернуться</a></p>
+    <div class="alert alert-success">Изменения сохранены. <a href="index.php">Вернуться к списку</a></div>
   <?php elseif ($error): ?>
-    <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
   <?php endif; ?>
 
-  <form method="post">
-    <label>Название:<br>
-      <input type="text" name="name" value="<?= htmlspecialchars($server['name']) ?>" required>
-    </label><br><br>
+  <form method="post" class="row g-3 mt-4">
+    <div class="col-md-6">
+      <label class="form-label">Название сервера</label>
+      <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($server['name']) ?>" required>
+    </div>
 
-    <label>IP-адрес:<br>
-      <input type="text" name="ip" value="<?= htmlspecialchars($server['ip']) ?>" required>
-    </label><br><br>
+    <div class="col-md-6">
+      <label class="form-label">IP-адрес</label>
+      <input type="text" name="ip" class="form-control" value="<?= htmlspecialchars($server['ip']) ?>" required>
+    </div>
 
-    <label>Пользователь:<br>
-      <input type="text" name="user" value="<?= htmlspecialchars($server['user']) ?>" required>
-    </label><br><br>
+    <div class="col-md-6">
+      <label class="form-label">Пользователь</label>
+      <input type="text" name="user" class="form-control" value="<?= htmlspecialchars($server['user']) ?>" required>
+    </div>
 
-    <label>Службы (через запятую):<br>
-      <input type="text" name="services" value="<?= htmlspecialchars($server['services']) ?>">
-    </label><br><br>
+    <div class="col-md-6">
+      <label class="form-label">Службы (через запятую)</label>
+      <input type="text" name="services" class="form-control" value="<?= htmlspecialchars($server['services']) ?>">
+    </div>
 
-    <button type="submit">💾 Сохранить</button>
-    <a href="index.php">Отмена</a>
+    <div class="col-12 d-flex justify-content-center gap-3 mt-3">
+      <button type="submit" class="btn btn-outline-success">💾 Сохранить</button>
+      <a href="index.php" class="btn btn-outline-secondary">🚫 Отмена</a>
+    </div>
   </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
